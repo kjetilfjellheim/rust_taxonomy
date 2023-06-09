@@ -1,0 +1,2 @@
+[print_schema]
+file = "src/taxonomy/dao/schema.rs"
