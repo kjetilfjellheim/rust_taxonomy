@@ -1,7 +1,7 @@
 use diesel::pg::PgConnection;
 use diesel::r2d2::ConnectionManager;
 use lazy_static::lazy_static;
-use r2d2::{self, PooledConnection};
+use r2d2::{ self, PooledConnection };
 use std::env;
 
 use crate::taxonomy::model::{ApplicationError, ErrorType};

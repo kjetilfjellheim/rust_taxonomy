@@ -1,3 +1,3 @@
 mod db;
 
-pub use db::{init_db, connection};
+pub use db::{ init_db, connection };
