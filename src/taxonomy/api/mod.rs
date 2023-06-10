@@ -1,4 +1,3 @@
-mod error_handler;
 mod routes;
 mod response;
 
