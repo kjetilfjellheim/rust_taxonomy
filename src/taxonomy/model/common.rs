@@ -1,27 +1,27 @@
 ///
 /// Common list request object.
 ///
-pub struct ListRequest {
+pub struct TaxonomyListRequest {
     pub start_index: i64,
     pub number_of_elements: i64,
 }
 
-impl ListRequest {
-    pub fn new(start_index: i64, number_of_elements: i64) -> ListRequest {
-        ListRequest {
+impl TaxonomyListRequest {
+    pub fn new(start_index: i64, number_of_elements: i64) -> TaxonomyListRequest {
+        TaxonomyListRequest {
             start_index: start_index,
             number_of_elements: number_of_elements,
         }
     }
 }
 
-pub struct GetTsnRequest {
+pub struct TaxonomyGetRequest {
     pub tsn: i32,
 }
 
-impl GetTsnRequest {
-    pub fn new(tsn: i32) -> GetTsnRequest {
-        GetTsnRequest {
+impl TaxonomyGetRequest {
+    pub fn new(tsn: i32) -> TaxonomyGetRequest {
+        TaxonomyGetRequest {
             tsn: tsn
         }
     }
@@ -30,20 +30,20 @@ impl GetTsnRequest {
 ///
 /// List response object.
 ///
-pub struct ListResponse<T> {
+pub struct TaxonomyListResponse<T> {
     pub start_index: i64,
     pub number_of_elements: i64,
     pub has_more_elements: bool,
     pub elements: Vec<T>,
 }
 
-impl<T> ListResponse<T> {
+impl<T> TaxonomyListResponse<T> {
     pub fn new(
         start_index: i64,
         number_of_elements: i64,
         queried_number_of_elements: i64,
         queried_elements: Vec<T>,
-    ) -> ListResponse<T> {
+    ) -> TaxonomyListResponse<T> {
         let queried_elements_length = queried_elements.len() as i64;
         let vec: Vec<T>;
         if queried_number_of_elements > queried_elements.len() as i64 {
@@ -54,7 +54,7 @@ impl<T> ListResponse<T> {
                 .take(number_of_elements as usize)
                 .collect();
         }
-        ListResponse {
+        TaxonomyListResponse {
             start_index: start_index,
             number_of_elements: vec.len() as i64,
             has_more_elements: queried_number_of_elements == queried_elements_length,

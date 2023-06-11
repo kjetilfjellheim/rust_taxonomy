@@ -3,7 +3,7 @@ use crate::taxonomy::dao::TaxonomicUnit;
 use crate::taxonomy::dao::{
     taxonomic_units, taxonomic_units::dsl::taxonomic_units as taxonomic_units_dsl,
 };
-use crate::taxonomy::model::{ApplicationError, ErrorType, ListRequest, ListResponse, GetTsnRequest};
+use crate::taxonomy::model::{ApplicationError, ErrorType, TaxonomyListRequest, TaxonomyListResponse, TaxonomyGetRequest};
 use diesel::prelude::*;
 use diesel::result::Error::*;
 use log::{debug, warn};
@@ -18,8 +18,8 @@ const LONGNAME_NOT_FOUND: &str = "Did not find that tsn number";
 /// Find all longnames using start_index and page_size.
 ///
 pub fn find_all_tsn(
-    list_request: ListRequest,
-) -> Result<ListResponse<TaxonomicUnit>, ApplicationError> {
+    list_request: TaxonomyListRequest,
+) -> Result<TaxonomyListResponse<TaxonomicUnit>, ApplicationError> {
     let connection = &mut connection()?;
     let query_result = taxonomic_units_dsl
         .limit(list_request.number_of_elements + 1)
@@ -27,7 +27,7 @@ pub fn find_all_tsn(
         .select((taxonomic_units::tsn, taxonomic_units::complete_name))
         .load(connection);
     match query_result {
-        Ok(query_result) => Ok(ListResponse::new(
+        Ok(query_result) => Ok(TaxonomyListResponse::new(
             list_request.start_index,
             list_request.number_of_elements,
             list_request.number_of_elements + 1,
@@ -46,7 +46,7 @@ pub fn find_all_tsn(
 ///
 /// Find single longname row.
 ///
-pub fn find_specific_tsn(get_tsn_request : GetTsnRequest) -> Result<TaxonomicUnit, ApplicationError> {
+pub fn find_specific_tsn(get_tsn_request : TaxonomyGetRequest) -> Result<TaxonomicUnit, ApplicationError> {
     let connection = &mut connection()?;
     let query_result = taxonomic_units_dsl
         .select((taxonomic_units::tsn, taxonomic_units::complete_name))

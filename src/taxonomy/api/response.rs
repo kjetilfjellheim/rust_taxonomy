@@ -1,7 +1,7 @@
 use serde::Serialize;
 
 use crate::taxonomy::dao::TaxonomicUnit;
-use crate::taxonomy::model::ListResponse;
+use crate::taxonomy::model::TaxonomyListResponse;
 
 ///
 /// Longname response object from the api
@@ -43,8 +43,8 @@ pub struct PaginationType {
 ///
 /// Converter from List response object to longname list object response.
 ///
-impl From<ListResponse<TaxonomicUnit>> for TaxonomyListResponseType {
-    fn from(list_response: ListResponse<TaxonomicUnit>) -> Self {
+impl From<TaxonomyListResponse<TaxonomicUnit>> for TaxonomyListResponseType {
+    fn from(list_response: TaxonomyListResponse<TaxonomicUnit>) -> Self {
         let mut vec = Vec::new();
 
         for element in list_response.elements {
