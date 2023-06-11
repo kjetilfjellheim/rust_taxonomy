@@ -1,10 +1,10 @@
 extern crate diesel;
 
 use crate::taxonomy::init_db;
-use crate::taxonomy::{ list_longnames, get_longname };
+use crate::taxonomy::{get_longname, list_longnames};
 use actix_web::{web, App, HttpServer};
 use dotenv::dotenv;
-
+use log4rs;
 mod taxonomy;
 
 ///
@@ -12,6 +12,7 @@ mod taxonomy;
 ///
 #[actix_rt::main]
 async fn main() -> Result<(), std::io::Error> {
+    log4rs::init_file("resources/logging.yaml", Default::default()).unwrap();
     dotenv().ok();
     init_db();
     let server = HttpServer::new(|| App::new().configure(init_routes));
@@ -28,8 +29,5 @@ async fn main() -> Result<(), std::io::Error> {
 /// Initialize all api routes.
 ///
 pub fn init_routes(config: &mut web::ServiceConfig) {
-    config
-        .service(list_longnames)
-        .service(get_longname);
-
+    config.service(list_longnames).service(get_longname);
 }

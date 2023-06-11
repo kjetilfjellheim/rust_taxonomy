@@ -19,7 +19,7 @@ impl ListRequestQuery {
     pub fn new(start_index: Option<i64>, page_size: Option<i64>) -> ListRequestQuery {
         ListRequestQuery {
             start_index: start_index,
-            page_size: page_size
+            page_size: page_size,
         }
     }
 }

@@ -1,5 +1,6 @@
 use actix_web::http::StatusCode;
 use actix_web::{HttpResponse, ResponseError};
+use log::warn;
 use serde::Serialize;
 use std::collections::HashMap;
 use std::fmt;
@@ -75,6 +76,7 @@ impl fmt::Display for ApplicationError {
 
 impl ResponseError for ApplicationError {
     fn error_response(&self) -> HttpResponse {
+        warn!("Response failure: {}", &self);
         let error_response = AppErrorResponse {
             code: self.error_type.get_errorcode(),
             message: self.message.clone(),

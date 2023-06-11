@@ -1,23 +1,22 @@
 /**
  * Database objects.
  */
-
 use diesel::prelude::*;
 
 ///
 /// Longname database object.
 ///
 #[derive(Queryable, Selectable)]
-#[diesel(table_name = crate::taxonomy::dao::longnames)]
+#[diesel(table_name = crate::taxonomy::dao::taxonomic_units)]
 #[diesel(check_for_backend(diesel::pg::Pg))]
-pub struct Longname {
+pub struct TaxonomicUnit {
     pub tsn: i32,
-    pub completename: String,
+    pub complete_name: String,
 }
 
 diesel::table! {
-    longnames (tsn) {
+    taxonomic_units (tsn) {
         tsn -> Int4,
-        completename -> Varchar,
+        complete_name -> Varchar,
     }
 }

@@ -32,7 +32,6 @@ impl<T> ListResponse<T> {
         queried_number_of_elements: i64,
         queried_elements: Vec<T>,
     ) -> ListResponse<T> {
-
         let queried_elements_length = queried_elements.len() as i64;
         let vec: Vec<T>;
         if queried_number_of_elements > queried_elements.len() as i64 {

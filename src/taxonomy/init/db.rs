@@ -1,6 +1,7 @@
 use diesel::pg::PgConnection;
 use diesel::r2d2::ConnectionManager;
 use lazy_static::lazy_static;
+use log::error;
 use r2d2::{self, PooledConnection};
 use std::env;
 
@@ -29,6 +30,10 @@ pub fn init_db() {
 /// Get connection from connection pool
 ///
 pub fn connection() -> Result<PooledConnection<ConnectionManager<PgConnection>>, ApplicationError> {
-    POOL.get()
-        .map_err(|e| ApplicationError::new(ErrorType::ConnectionError, e.to_string()))
+    POOL.get().map_err(map_connection_error)
+}
+
+fn map_connection_error(error: r2d2::Error) -> ApplicationError {
+    error!("Failed to get connection: {}", error);
+    ApplicationError::new(ErrorType::ConnectionError, error.to_string())
 }

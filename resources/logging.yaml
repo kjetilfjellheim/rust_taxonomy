@@ -1,0 +1,22 @@
+refresh_rate: 30 seconds
+appenders:
+  taxonomy:
+    kind: file
+    path: log/taxonomy.log
+    encoder:
+      pattern: "{h({d(%Y-%m-%d %H:%M:%S)(utc)} - {l}: {m}{n})}"
+  requests:
+    kind: file
+    path: "log/requests.log"
+    encoder:
+      pattern: "{h({d(%Y-%m-%d %H:%M:%S)(utc)} - {l}: {m}{n})}"
+root:
+  level: warn
+  appenders:
+    - taxonomy
+loggers:
+  app::requests:
+    level: info
+    appenders:
+      - requests
+    additive: false

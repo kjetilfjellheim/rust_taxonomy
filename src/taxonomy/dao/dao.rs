@@ -1,16 +1,18 @@
-use std::str::FromStr;
-
-use diesel::{prelude::*, r2d2::ConnectionManager};
+use crate::taxonomy::connection;
+use crate::taxonomy::dao::TaxonomicUnit;
+use crate::taxonomy::dao::{
+    taxonomic_units, taxonomic_units::dsl::taxonomic_units as taxonomic_units_dsl,
+};
+use crate::taxonomy::model::{ApplicationError, ErrorType, ListRequest, ListResponse};
+use diesel::prelude::*;
 use diesel::result::Error::*;
-use r2d2::PooledConnection;
-use crate::taxonomy::dao::{ Longname };
-use crate::taxonomy::dao::longnames::dsl::longnames;
-use crate::taxonomy::model::{ ApplicationError, ErrorType, ListRequest, ListResponse };
+use log::{debug, warn};
+use std::str::FromStr;
 
 ///
 /// Error messages.
 ///
-const QUERY_ERROR_STRING: &str = "Error querying longnames table";
+const QUERY_ERROR_STRING: &str = "Error querying taxonomic data";
 const NUMBER_OF_ELEMENTS_MIN_CHECK: &str = "Number of elments must be greater than 0";
 const NUMBER_OF_ELEMENTS_MAX_CHECK: &str = "Number of elements must be less than or euals to 500";
 const LONGNAME_NOT_FOUND: &str = "Did not find that tsn number";
@@ -23,25 +25,17 @@ const MAX_ELEMENTS: i64 = 500;
 const MIN_ELEMENTS: i64 = 0;
 
 ///
-/// get connection from connection pool.
-///
-fn get_connection() -> Result<PooledConnection<ConnectionManager<PgConnection>>, ApplicationError> {
-    match crate::taxonomy::connection() {
-        Ok(conn) => Ok(conn),
-        Err(application_error) => Err(application_error),
-    }
-}
-
-///
 /// Find all longnames using start_index and page_size.
 ///
-pub fn find_all(list_request: ListRequest) -> Result<ListResponse<Longname>, ApplicationError> {
+pub fn find_all(
+    list_request: ListRequest,
+) -> Result<ListResponse<TaxonomicUnit>, ApplicationError> {
     validate_request(&list_request)?;
-    let connection = &mut get_connection()?;
-    let query_result = longnames
+    let connection = &mut connection()?;
+    let query_result = taxonomic_units_dsl
         .limit(list_request.number_of_elements + 1)
         .offset(list_request.start_index)
-        .select(Longname::as_select())
+        .select((taxonomic_units::tsn, taxonomic_units::complete_name))
         .load(connection);
     match query_result {
         Ok(query_result) => Ok(ListResponse::new(
@@ -50,29 +44,8 @@ pub fn find_all(list_request: ListRequest) -> Result<ListResponse<Longname>, App
             list_request.number_of_elements + 1,
             query_result,
         )),
-        Err(_error) => Err(ApplicationError::new(
-            ErrorType::DbProgramError,
-            QUERY_ERROR_STRING.to_string(),
-        )),
-    }
-}
-
-///
-/// Find single longname row.
-///
-pub fn find_longname(tsn_query: &String) -> Result<Longname, ApplicationError> {
-    let tsn_value = validate_tsn(tsn_query)?;
-    let connection = &mut get_connection()?;
-    let query_result = longnames.select(Longname::as_select()).find(tsn_value).first(connection);
-    match query_result {
-        Ok(longname) => Ok(longname),
-        Err(NotFound) => {
-            Err(ApplicationError::new(
-                ErrorType::NotFoundError,
-                LONGNAME_NOT_FOUND.to_string(),
-            ))
-        },
-        Err(_) => {
+        Err(error) => {
+            warn!("Error occured quering taxonomy list: {}", error);
             Err(ApplicationError::new(
                 ErrorType::DbProgramError,
                 QUERY_ERROR_STRING.to_string(),
@@ -81,6 +54,34 @@ pub fn find_longname(tsn_query: &String) -> Result<Longname, ApplicationError> {
     }
 }
 
+///
+/// Find single longname row.
+///
+pub fn find_longname(tsn_query: &String) -> Result<TaxonomicUnit, ApplicationError> {
+    let tsn_value = validate_tsn(tsn_query)?;
+    let connection = &mut connection()?;
+    let query_result = taxonomic_units_dsl
+        .select((taxonomic_units::tsn, taxonomic_units::complete_name))
+        .find(tsn_value)
+        .first(connection);
+    match query_result {
+        Ok(longname) => Ok(longname),
+        Err(NotFound) => {
+            debug!("Did not find tsn {}", tsn_query);
+            Err(ApplicationError::new(
+                ErrorType::NotFoundError,
+                LONGNAME_NOT_FOUND.to_string(),
+            ))
+        }
+        Err(error) => {
+            warn!("Error occured quering specific taxonomy: {}", &error);
+            Err(ApplicationError::new(
+                ErrorType::DbProgramError,
+                QUERY_ERROR_STRING.to_string(),
+            ))
+        }
+    }
+}
 
 ///
 /// Validate input. Move this to common validation service.
