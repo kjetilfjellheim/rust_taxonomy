@@ -1,4 +1,4 @@
-use crate::taxonomy::api::request::{ListRequestQuery };
+use crate::taxonomy::api::request::{TaxonomyListRequestQuery };
 use actix_web::{get, web, web::Path, web::Query, HttpResponse};
 
 use crate::taxonomy::api::response::{TaxonomyElementType, TaxonomyListResponseType};
@@ -16,7 +16,7 @@ const DEFAULT_PAGE_SIZE: i64 = 500;
 ///
 #[get("/taxonomy")]
 pub async fn list_tsn(
-    list_request_params: Query<ListRequestQuery>,
+    list_request_params: Query<TaxonomyListRequestQuery>,
 ) -> Result<HttpResponse, ApplicationError> {
     let list_request = ListRequest::new(
         list_request_params
