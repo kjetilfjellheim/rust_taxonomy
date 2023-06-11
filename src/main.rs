@@ -1,7 +1,7 @@
 extern crate diesel;
 
 use crate::taxonomy::init_db;
-use crate::taxonomy::{ get_specific_tsn, list_tsn };
+use crate::taxonomy::{get_specific_tsn, list_tsn};
 use actix_web::{web, App, HttpServer};
 use dotenv::dotenv;
 use log4rs;

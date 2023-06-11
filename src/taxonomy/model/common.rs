@@ -21,9 +21,7 @@ pub struct TaxonomyGetRequest {
 
 impl TaxonomyGetRequest {
     pub fn new(tsn: i32) -> TaxonomyGetRequest {
-        TaxonomyGetRequest {
-            tsn: tsn
-        }
+        TaxonomyGetRequest { tsn: tsn }
     }
 }
 

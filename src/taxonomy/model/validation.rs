@@ -1,5 +1,5 @@
-use crate::taxonomy::model::errorcode::{ ApplicationError, ErrorType };
-use crate::taxonomy::model::common::{ TaxonomyListRequest };
+use crate::taxonomy::model::common::TaxonomyListRequest;
+use crate::taxonomy::model::errorcode::{ApplicationError, ErrorType};
 use std::str::FromStr;
 
 const LONGNAME_TSN_INCORRECT: &str = "Tsn input must be 32 bit integer";
@@ -14,7 +14,9 @@ const MIN_ELEMENTS: i64 = 0;
 ///
 /// Validate input. Move this to common validation service.
 ///
-pub fn validate_list_tsn_request(list_request: &TaxonomyListRequest) -> Result<(), ApplicationError> {
+pub fn validate_list_tsn_request(
+    list_request: &TaxonomyListRequest,
+) -> Result<(), ApplicationError> {
     match MAX_ELEMENTS.cmp(&list_request.number_of_elements) {
         std::cmp::Ordering::Less => {
             return Err(ApplicationError::new(

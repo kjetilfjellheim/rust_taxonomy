@@ -3,7 +3,9 @@ use crate::taxonomy::dao::TaxonomicUnit;
 use crate::taxonomy::dao::{
     taxonomic_units, taxonomic_units::dsl::taxonomic_units as taxonomic_units_dsl,
 };
-use crate::taxonomy::model::{ApplicationError, ErrorType, TaxonomyListRequest, TaxonomyListResponse, TaxonomyGetRequest};
+use crate::taxonomy::model::{
+    ApplicationError, ErrorType, TaxonomyGetRequest, TaxonomyListRequest, TaxonomyListResponse,
+};
 use diesel::prelude::*;
 use diesel::result::Error::*;
 use log::{debug, warn};
@@ -46,7 +48,9 @@ pub fn find_all_tsn(
 ///
 /// Find single longname row.
 ///
-pub fn find_specific_tsn(get_tsn_request : TaxonomyGetRequest) -> Result<TaxonomicUnit, ApplicationError> {
+pub fn find_specific_tsn(
+    get_tsn_request: TaxonomyGetRequest,
+) -> Result<TaxonomicUnit, ApplicationError> {
     let connection = &mut connection()?;
     let query_result = taxonomic_units_dsl
         .select((taxonomic_units::tsn, taxonomic_units::complete_name))
