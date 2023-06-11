@@ -7,22 +7,12 @@ use crate::taxonomy::model::{ApplicationError, ErrorType, ListRequest, ListRespo
 use diesel::prelude::*;
 use diesel::result::Error::*;
 use log::{debug, warn};
-use std::str::FromStr;
 
 ///
 /// Error messages.
 ///
 const QUERY_ERROR_STRING: &str = "Error querying taxonomic data";
-const NUMBER_OF_ELEMENTS_MIN_CHECK: &str = "Number of elments must be greater than 0";
-const NUMBER_OF_ELEMENTS_MAX_CHECK: &str = "Number of elements must be less than or euals to 500";
 const LONGNAME_NOT_FOUND: &str = "Did not find that tsn number";
-const LONGNAME_TSN_INCORRECT: &str = "Tsn input must be 32 bit integer";
-
-///
-/// Constants used for validation. This should be must to configuration.
-///
-const MAX_ELEMENTS: i64 = 500;
-const MIN_ELEMENTS: i64 = 0;
 
 ///
 /// Find all longnames using start_index and page_size.
@@ -30,7 +20,6 @@ const MIN_ELEMENTS: i64 = 0;
 pub fn find_all(
     list_request: ListRequest,
 ) -> Result<ListResponse<TaxonomicUnit>, ApplicationError> {
-    validate_request(&list_request)?;
     let connection = &mut connection()?;
     let query_result = taxonomic_units_dsl
         .limit(list_request.number_of_elements + 1)
@@ -57,17 +46,16 @@ pub fn find_all(
 ///
 /// Find single longname row.
 ///
-pub fn find_longname(tsn_query: &String) -> Result<TaxonomicUnit, ApplicationError> {
-    let tsn_value = validate_tsn(tsn_query)?;
+pub fn find_longname(tsn: &i32) -> Result<TaxonomicUnit, ApplicationError> {
     let connection = &mut connection()?;
     let query_result = taxonomic_units_dsl
         .select((taxonomic_units::tsn, taxonomic_units::complete_name))
-        .find(tsn_value)
+        .find(tsn)
         .first(connection);
     match query_result {
         Ok(longname) => Ok(longname),
         Err(NotFound) => {
-            debug!("Did not find tsn {}", tsn_query);
+            debug!("Did not find tsn {}", tsn);
             Err(ApplicationError::new(
                 ErrorType::NotFoundError,
                 LONGNAME_NOT_FOUND.to_string(),
@@ -79,46 +67,6 @@ pub fn find_longname(tsn_query: &String) -> Result<TaxonomicUnit, ApplicationErr
                 ErrorType::DbProgramError,
                 QUERY_ERROR_STRING.to_string(),
             ))
-        }
-    }
-}
-
-///
-/// Validate input. Move this to common validation service.
-///
-fn validate_request(list_request: &ListRequest) -> Result<(), ApplicationError> {
-    match MAX_ELEMENTS.cmp(&list_request.number_of_elements) {
-        std::cmp::Ordering::Less => {
-            return Err(ApplicationError::new(
-                ErrorType::InputError,
-                NUMBER_OF_ELEMENTS_MAX_CHECK.to_string(),
-            ));
-        }
-        std::cmp::Ordering::Equal | std::cmp::Ordering::Greater => {}
-    }
-    match MIN_ELEMENTS.cmp(&list_request.number_of_elements) {
-        std::cmp::Ordering::Greater => {
-            return Err(ApplicationError::new(
-                ErrorType::InputError,
-                NUMBER_OF_ELEMENTS_MIN_CHECK.to_string(),
-            ));
-        }
-        std::cmp::Ordering::Equal | std::cmp::Ordering::Less => {}
-    }
-    Ok(())
-}
-
-///
-/// Validate input. Move this to common validation service.
-///
-fn validate_tsn(tsn_str: &String) -> Result<i32, ApplicationError> {
-    match <i32 as FromStr>::from_str(&tsn_str) {
-        Ok(val) => Ok(val),
-        Err(_) => {
-            return Err(ApplicationError::new(
-                ErrorType::InputError,
-                LONGNAME_TSN_INCORRECT.to_string(),
-            ));
         }
     }
 }
