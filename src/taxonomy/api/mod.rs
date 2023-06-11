@@ -1,4 +1,6 @@
-mod routes;
+mod request;
 mod response;
+mod routes;
 
-pub use routes::list_longnames;
+pub use request::ListRequestQuery;
+pub use routes::{ list_longnames, get_longname };

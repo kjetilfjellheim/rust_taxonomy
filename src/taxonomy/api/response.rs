@@ -2,28 +2,38 @@ use serde::Serialize;
 
 use crate::taxonomy::model::{ListResponse, Longname};
 
-
+///
+/// Longname response object from the api
+///
 #[derive(Serialize)]
 pub struct LongnameResponseType {
     pub longnames: Vec<LongnameType>,
-    pub pagination: PaginationType
+    pub pagination: PaginationType,
 }
 
+///
+/// Single Longname used in the list service.
+///
 #[derive(Serialize)]
 pub struct LongnameType {
     tsn: i32,
-    completename: String
+    completename: String,
 }
 
+///
+/// Common pagination response object.
+///
 #[derive(Serialize)]
 pub struct PaginationType {
     start_index: i64,
     number_of_elements: i64,
-    has_more_elements: bool
+    has_more_elements: bool,
 }
 
+///
+/// Converter from List response object to longname list object response.
+///
 impl From<ListResponse<Longname>> for LongnameResponseType {
-
     fn from(list_response: ListResponse<Longname>) -> Self {
         let mut vec = Vec::new();
 
@@ -32,16 +42,19 @@ impl From<ListResponse<Longname>> for LongnameResponseType {
         }
 
         LongnameResponseType {
-            pagination : PaginationType {
+            pagination: PaginationType {
                 start_index: list_response.start_index,
                 number_of_elements: list_response.number_of_elements,
                 has_more_elements: list_response.has_more_elements,
             },
-            longnames: vec
+            longnames: vec,
         }
     }
 }
 
+///
+///  Convert single Longname db object to response object.
+///
 impl From<Longname> for LongnameType {
     fn from(longname: Longname) -> Self {
         LongnameType {

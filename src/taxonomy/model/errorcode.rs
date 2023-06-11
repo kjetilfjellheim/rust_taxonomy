@@ -4,30 +4,37 @@ use serde::Serialize;
 use std::collections::HashMap;
 use std::fmt;
 
-
+///
+/// Common api response object from the service layer.
+///
 #[derive(Debug, Serialize)]
 pub struct AppErrorResponse {
     pub code: i32,
     pub message: String,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub params: Option<HashMap<String, String>>
+    pub params: Option<HashMap<String, String>>,
 }
 
+///
+/// Error types used in the service.
+///
 #[derive(Debug, Serialize)]
 pub enum ErrorType {
     DbProgramError,
     ConnectionError,
     UnexpectedError,
+    NotFoundError,
     InputError,
 }
 
 impl ErrorType {
-    fn get_errorcode(&self) -> i32{
+    fn get_errorcode(&self) -> i32 {
         match *self {
             Self::DbProgramError => 5001,
             Self::ConnectionError => 5002,
             Self::UnexpectedError => 5003,
             Self::InputError => 5004,
+            Self::NotFoundError => 5005,
         }
     }
 
@@ -37,18 +44,22 @@ impl ErrorType {
             Self::ConnectionError => StatusCode::INTERNAL_SERVER_ERROR,
             Self::UnexpectedError => StatusCode::INTERNAL_SERVER_ERROR,
             Self::InputError => StatusCode::BAD_REQUEST,
+            Self::NotFoundError => StatusCode::NOT_FOUND,
         }
     }
 }
 
+///
+/// Application error used the logic.
+///
 #[derive(Debug, Serialize)]
 pub struct ApplicationError {
     pub error_type: ErrorType,
-    pub message: String
+    pub message: String,
 }
 
 impl ApplicationError {
-    pub fn new(error_type: ErrorType, message: String) -> Self{
+    pub fn new(error_type: ErrorType, message: String) -> Self {
         ApplicationError {
             error_type: error_type,
             message: message,
