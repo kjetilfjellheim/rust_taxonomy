@@ -17,7 +17,7 @@ const LONGNAME_NOT_FOUND: &str = "Did not find that tsn number";
 ///
 /// Find all longnames using start_index and page_size.
 ///
-pub fn find_all(
+pub fn find_all_tsn(
     list_request: ListRequest,
 ) -> Result<ListResponse<TaxonomicUnit>, ApplicationError> {
     let connection = &mut connection()?;
@@ -46,7 +46,7 @@ pub fn find_all(
 ///
 /// Find single longname row.
 ///
-pub fn find_longname(tsn: &i32) -> Result<TaxonomicUnit, ApplicationError> {
+pub fn find_specific_tsn(tsn: &i32) -> Result<TaxonomicUnit, ApplicationError> {
     let connection = &mut connection()?;
     let query_result = taxonomic_units_dsl
         .select((taxonomic_units::tsn, taxonomic_units::complete_name))

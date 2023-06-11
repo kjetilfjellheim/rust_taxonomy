@@ -1,7 +1,7 @@
 extern crate diesel;
 
 use crate::taxonomy::init_db;
-use crate::taxonomy::{get_longname, list_longnames};
+use crate::taxonomy::{ get_specific_tsn, list_tsn };
 use actix_web::{web, App, HttpServer};
 use dotenv::dotenv;
 use log4rs;
@@ -29,5 +29,5 @@ async fn main() -> Result<(), std::io::Error> {
 /// Initialize all api routes.
 ///
 pub fn init_routes(config: &mut web::ServiceConfig) {
-    config.service(list_longnames).service(get_longname);
+    config.service(get_specific_tsn).service(list_tsn);
 }
