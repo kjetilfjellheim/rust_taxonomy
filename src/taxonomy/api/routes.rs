@@ -1,7 +1,7 @@
 use crate::taxonomy::api::request::{ListRequestQuery };
 use actix_web::{get, web, web::Path, web::Query, HttpResponse};
 
-use crate::taxonomy::api::response::{LongnameResponseType, LongnameType};
+use crate::taxonomy::api::response::{TaxonomyElementType, TaxonomyListResponseType};
 use crate::taxonomy::dao::{ find_all_tsn, find_specific_tsn };
 use crate::taxonomy::model::{ApplicationError, ListRequest, GetTsnRequest};
 use crate::taxonomy::model::{ validate_list_tsn_request, validate_specific_tsn_request};
@@ -27,7 +27,7 @@ pub async fn list_tsn(
     validate_list_tsn_request(&list_request)?;
     let longnames = web::block(|| find_all_tsn(list_request)).await.unwrap();
     match longnames {
-        Ok(longnames) => Ok(HttpResponse::Ok().json(LongnameResponseType::from(longnames))),
+        Ok(longnames) => Ok(HttpResponse::Ok().json(TaxonomyListResponseType::from(longnames))),
         Err(application_error) => Err(application_error),
     }
 }
@@ -41,7 +41,7 @@ pub async fn get_specific_tsn(tsn: Path<String>) -> Result<HttpResponse, Applica
     let get_specific_tsn_request = GetTsnRequest::new(tsn);
     let longname = web::block(|| find_specific_tsn(get_specific_tsn_request)).await.unwrap();
     match longname {
-        Ok(longname) => Ok(HttpResponse::Ok().json(LongnameType::from(longname))),
+        Ok(longname) => Ok(HttpResponse::Ok().json(TaxonomyElementType::from(longname))),
         Err(application_error) => Err(application_error),
     }
 }

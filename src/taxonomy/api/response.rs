@@ -7,8 +7,8 @@ use crate::taxonomy::model::ListResponse;
 /// Longname response object from the api
 ///
 #[derive(Serialize)]
-pub struct LongnameResponseType {
-    pub longnames: Vec<LongnameType>,
+pub struct TaxonomyListResponseType {
+    pub tsn: Vec<TaxonomyElementType>,
     pub pagination: PaginationType,
 }
 
@@ -16,9 +16,18 @@ pub struct LongnameResponseType {
 /// Single Longname used in the list service.
 ///
 #[derive(Serialize)]
-pub struct LongnameType {
+pub struct TaxonomyElementType {
     tsn: i32,
-    completename: String,
+    name: String,
+    parent_tsn: Option<i32>,
+    parent_name: Option<String>,
+    children: Option<Vec<TaxonomyChildElementType>>
+}
+
+#[derive(Serialize)]
+pub struct TaxonomyChildElementType {
+    tsn: i32,
+    name: String,
 }
 
 ///
@@ -34,21 +43,21 @@ pub struct PaginationType {
 ///
 /// Converter from List response object to longname list object response.
 ///
-impl From<ListResponse<TaxonomicUnit>> for LongnameResponseType {
+impl From<ListResponse<TaxonomicUnit>> for TaxonomyListResponseType {
     fn from(list_response: ListResponse<TaxonomicUnit>) -> Self {
         let mut vec = Vec::new();
 
         for element in list_response.elements {
-            vec.push(LongnameType::from(element));
+            vec.push(TaxonomyElementType::from(element));
         }
 
-        LongnameResponseType {
+        TaxonomyListResponseType {
             pagination: PaginationType {
                 start_index: list_response.start_index,
                 number_of_elements: list_response.number_of_elements,
                 has_more_elements: list_response.has_more_elements,
             },
-            longnames: vec,
+            tsn: vec,
         }
     }
 }
@@ -56,11 +65,14 @@ impl From<ListResponse<TaxonomicUnit>> for LongnameResponseType {
 ///
 ///  Convert single Longname db object to response object.
 ///
-impl From<TaxonomicUnit> for LongnameType {
+impl From<TaxonomicUnit> for TaxonomyElementType {
     fn from(longname: TaxonomicUnit) -> Self {
-        LongnameType {
+        TaxonomyElementType {
             tsn: longname.tsn,
-            completename: longname.complete_name.clone(),
+            name: longname.complete_name.clone(),
+            parent_tsn: None,
+            parent_name: None,
+            children: None
         }
     }
 }
