@@ -28,22 +28,22 @@ impl TaxonomyGetRequest {
 ///
 /// List response object.
 ///
-pub struct TaxonomyListResponse<T> {
+pub struct TaxonomyListResponse {
     pub start_index: i64,
     pub number_of_elements: i64,
     pub has_more_elements: bool,
-    pub elements: Vec<T>,
+    pub elements: Vec<TaxonomyListElement>,
 }
 
-impl<T> TaxonomyListResponse<T> {
+impl TaxonomyListResponse {
     pub fn new(
         start_index: i64,
         number_of_elements: i64,
         queried_number_of_elements: i64,
-        queried_elements: Vec<T>,
-    ) -> TaxonomyListResponse<T> {
+        queried_elements: Vec<TaxonomyListElement>,
+    ) -> TaxonomyListResponse {
         let queried_elements_length = queried_elements.len() as i64;
-        let vec: Vec<T>;
+        let vec: Vec<TaxonomyListElement>;
         if queried_number_of_elements > queried_elements.len() as i64 {
             vec = queried_elements;
         } else {
@@ -59,4 +59,36 @@ impl<T> TaxonomyListResponse<T> {
             elements: vec,
         }
     }
+}
+
+pub struct TaxonomyListElement {
+    pub tsn: i32,
+    pub name: String,
+}
+
+impl TaxonomyListElement {
+
+    pub fn new(tsn: i32, name: String) -> TaxonomyListElement {
+        TaxonomyListElement {
+            tsn: tsn,
+            name: name,
+        }
+    }
+
+}
+
+pub struct TaxonomyGetResponse {
+    pub tsn: i32,
+    pub name: String
+}
+
+impl TaxonomyGetResponse {
+
+    pub fn new(tsn: i32, name: String) -> TaxonomyGetResponse {
+        TaxonomyGetResponse {
+            tsn: tsn,
+            name: name,
+        }
+    }
+
 }

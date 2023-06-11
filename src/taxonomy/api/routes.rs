@@ -43,7 +43,7 @@ pub async fn get_specific_tsn(tsn: Path<String>) -> Result<HttpResponse, Applica
         .await
         .unwrap();
     match longname {
-        Ok(longname) => Ok(HttpResponse::Ok().json(TaxonomyElementType::from(longname))),
+        Ok(data) => Ok(HttpResponse::Ok().json(TaxonomyElementType::from(data))),
         Err(application_error) => Err(application_error),
     }
 }

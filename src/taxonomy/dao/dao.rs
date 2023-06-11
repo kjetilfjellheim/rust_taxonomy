@@ -4,7 +4,7 @@ use crate::taxonomy::dao::{
     taxonomic_units, taxonomic_units::dsl::taxonomic_units as taxonomic_units_dsl,
 };
 use crate::taxonomy::model::{
-    ApplicationError, ErrorType, TaxonomyGetRequest, TaxonomyListRequest, TaxonomyListResponse,
+    ApplicationError, ErrorType, TaxonomyGetRequest, TaxonomyListRequest, TaxonomyListResponse, TaxonomyListElement, TaxonomyGetResponse,
 };
 use diesel::prelude::*;
 use diesel::result::Error::*;
@@ -21,7 +21,7 @@ const LONGNAME_NOT_FOUND: &str = "Did not find that tsn number";
 ///
 pub fn find_all_tsn(
     list_request: TaxonomyListRequest,
-) -> Result<TaxonomyListResponse<TaxonomicUnit>, ApplicationError> {
+) -> Result<TaxonomyListResponse, ApplicationError> {
     let connection = &mut connection()?;
     let query_result = taxonomic_units_dsl
         .limit(list_request.number_of_elements + 1)
@@ -33,7 +33,7 @@ pub fn find_all_tsn(
             list_request.start_index,
             list_request.number_of_elements,
             list_request.number_of_elements + 1,
-            query_result,
+            convert_queried_elements(query_result),
         )),
         Err(error) => {
             warn!("Error occured quering taxonomy list: {}", error);
@@ -50,14 +50,14 @@ pub fn find_all_tsn(
 ///
 pub fn find_specific_tsn(
     get_tsn_request: TaxonomyGetRequest,
-) -> Result<TaxonomicUnit, ApplicationError> {
+) -> Result<TaxonomyGetResponse, ApplicationError> {
     let connection = &mut connection()?;
-    let query_result = taxonomic_units_dsl
+    let query_result: Result<TaxonomicUnit, diesel::result::Error> = taxonomic_units_dsl
         .select((taxonomic_units::tsn, taxonomic_units::complete_name))
         .find(get_tsn_request.tsn)
         .first(connection);
     match query_result {
-        Ok(longname) => Ok(longname),
+        Ok(taxonomic_unit) => Ok(TaxonomyGetResponse::new(taxonomic_unit.tsn, taxonomic_unit.complete_name)),
         Err(NotFound) => {
             debug!("Did not find tsn {}", get_tsn_request.tsn);
             Err(ApplicationError::new(
@@ -73,4 +73,8 @@ pub fn find_specific_tsn(
             ))
         }
     }
+}
+
+fn convert_queried_elements(queried_result: Vec<TaxonomicUnit>) -> Vec<TaxonomyListElement> {
+    queried_result.into_iter().map(|element| TaxonomyListElement::new(element.tsn, element.complete_name)).collect()
 }

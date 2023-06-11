@@ -1,7 +1,6 @@
 use serde::Serialize;
 
-use crate::taxonomy::dao::TaxonomicUnit;
-use crate::taxonomy::model::TaxonomyListResponse;
+use crate::taxonomy::model::{ TaxonomyListResponse, TaxonomyListElement, TaxonomyGetResponse } ;
 
 ///
 /// Longname response object from the api
@@ -37,6 +36,21 @@ pub struct TaxonomyChildElementType {
 }
 
 ///
+/// Converter from GEt response object to tsn response object.
+///
+impl From<TaxonomyGetResponse> for TaxonomyElementType {
+    fn from(response: TaxonomyGetResponse) -> Self {
+        TaxonomyElementType {
+            tsn: response.tsn,
+            name: response.name,
+            parent_tsn: None,
+            parent_name: None,
+            children: None,
+        }
+    }
+}
+
+///
 /// Common pagination response object.
 ///
 #[derive(Serialize)]
@@ -50,8 +64,8 @@ pub struct PaginationType {
 ///
 /// Converter from List response object to longname list object response.
 ///
-impl From<TaxonomyListResponse<TaxonomicUnit>> for TaxonomyListResponseType {
-    fn from(list_response: TaxonomyListResponse<TaxonomicUnit>) -> Self {
+impl From<TaxonomyListResponse> for TaxonomyListResponseType {
+    fn from(list_response: TaxonomyListResponse) -> Self {
         let mut vec = Vec::new();
 
         for element in list_response.elements {
@@ -72,11 +86,11 @@ impl From<TaxonomyListResponse<TaxonomicUnit>> for TaxonomyListResponseType {
 ///
 ///  Convert single Longname db object to response object.
 ///
-impl From<TaxonomicUnit> for TaxonomyElementType {
-    fn from(longname: TaxonomicUnit) -> Self {
+impl From<TaxonomyListElement> for TaxonomyElementType {
+    fn from(list_element: TaxonomyListElement) -> Self {
         TaxonomyElementType {
-            tsn: longname.tsn,
-            name: longname.complete_name.clone(),
+            tsn: list_element.tsn,
+            name: list_element.name.clone(),
             parent_tsn: None,
             parent_name: None,
             children: None,
