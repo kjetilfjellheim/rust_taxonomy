@@ -3,8 +3,9 @@ use std::str::FromStr;
 use diesel::{prelude::*, r2d2::ConnectionManager};
 use diesel::result::Error::*;
 use r2d2::PooledConnection;
-use crate::taxonomy::model::longnames;
-use crate::taxonomy::model::{ApplicationError, ErrorType, ListRequest, ListResponse, Longname};
+use crate::taxonomy::dao::{ Longname };
+use crate::taxonomy::dao::longnames::dsl::longnames;
+use crate::taxonomy::model::{ ApplicationError, ErrorType, ListRequest, ListResponse };
 
 ///
 /// Error messages.

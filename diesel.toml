@@ -1,2 +1,2 @@
 [print_schema]
-file = "src/taxonomy/model/schema.rs"
+file = "src/taxonomy/dao/schema.rs"

@@ -1,6 +1,8 @@
 use serde::Serialize;
 
-use crate::taxonomy::model::{ListResponse, Longname};
+use crate::taxonomy::model::{ListResponse};
+use crate::taxonomy::dao::{ Longname };
+
 
 ///
 /// Longname response object from the api
