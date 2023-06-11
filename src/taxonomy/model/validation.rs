@@ -14,7 +14,7 @@ const MIN_ELEMENTS: i64 = 0;
 ///
 /// Validate input. Move this to common validation service.
 ///
-pub fn validate_request(list_request: &ListRequest) -> Result<(), ApplicationError> {
+pub fn validate_list_tsn_request(list_request: &ListRequest) -> Result<(), ApplicationError> {
     match MAX_ELEMENTS.cmp(&list_request.number_of_elements) {
         std::cmp::Ordering::Less => {
             return Err(ApplicationError::new(
@@ -39,7 +39,7 @@ pub fn validate_request(list_request: &ListRequest) -> Result<(), ApplicationErr
 ///
 /// Validate input. Move this to common validation service.
 ///
-pub fn validate_tsn(tsn_str: &String) -> Result<i32, ApplicationError> {
+pub fn validate_specific_tsn_request(tsn_str: &String) -> Result<i32, ApplicationError> {
     match <i32 as FromStr>::from_str(&tsn_str) {
         Ok(val) => Ok(val),
         Err(_) => {

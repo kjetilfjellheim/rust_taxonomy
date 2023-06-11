@@ -15,6 +15,18 @@ impl ListRequest {
     }
 }
 
+pub struct GetTsnRequest {
+    pub tsn: i32,
+}
+
+impl GetTsnRequest {
+    pub fn new(tsn: i32) -> GetTsnRequest {
+        GetTsnRequest {
+            tsn: tsn
+        }
+    }
+}
+
 ///
 /// List response object.
 ///

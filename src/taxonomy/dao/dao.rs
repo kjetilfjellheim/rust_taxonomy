@@ -3,7 +3,7 @@ use crate::taxonomy::dao::TaxonomicUnit;
 use crate::taxonomy::dao::{
     taxonomic_units, taxonomic_units::dsl::taxonomic_units as taxonomic_units_dsl,
 };
-use crate::taxonomy::model::{ApplicationError, ErrorType, ListRequest, ListResponse};
+use crate::taxonomy::model::{ApplicationError, ErrorType, ListRequest, ListResponse, GetTsnRequest};
 use diesel::prelude::*;
 use diesel::result::Error::*;
 use log::{debug, warn};
@@ -46,16 +46,16 @@ pub fn find_all_tsn(
 ///
 /// Find single longname row.
 ///
-pub fn find_specific_tsn(tsn: &i32) -> Result<TaxonomicUnit, ApplicationError> {
+pub fn find_specific_tsn(get_tsn_request : GetTsnRequest) -> Result<TaxonomicUnit, ApplicationError> {
     let connection = &mut connection()?;
     let query_result = taxonomic_units_dsl
         .select((taxonomic_units::tsn, taxonomic_units::complete_name))
-        .find(tsn)
+        .find(get_tsn_request.tsn)
         .first(connection);
     match query_result {
         Ok(longname) => Ok(longname),
         Err(NotFound) => {
-            debug!("Did not find tsn {}", tsn);
+            debug!("Did not find tsn {}", get_tsn_request.tsn);
             Err(ApplicationError::new(
                 ErrorType::NotFoundError,
                 LONGNAME_NOT_FOUND.to_string(),

@@ -23,7 +23,6 @@ pub struct AppErrorResponse {
 pub enum ErrorType {
     DbProgramError,
     ConnectionError,
-    UnexpectedError,
     NotFoundError,
     InputError,
 }
@@ -33,7 +32,6 @@ impl ErrorType {
         match *self {
             Self::DbProgramError => 5001,
             Self::ConnectionError => 5002,
-            Self::UnexpectedError => 5003,
             Self::InputError => 5004,
             Self::NotFoundError => 5005,
         }
@@ -43,7 +41,6 @@ impl ErrorType {
         match *self {
             Self::DbProgramError => StatusCode::INTERNAL_SERVER_ERROR,
             Self::ConnectionError => StatusCode::INTERNAL_SERVER_ERROR,
-            Self::UnexpectedError => StatusCode::INTERNAL_SERVER_ERROR,
             Self::InputError => StatusCode::BAD_REQUEST,
             Self::NotFoundError => StatusCode::NOT_FOUND,
         }
