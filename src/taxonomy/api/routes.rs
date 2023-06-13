@@ -10,7 +10,6 @@ use crate::taxonomy::model::{ApplicationError, TaxonomyGetRequest, TaxonomyListR
 const DEFAULT_START_INDEX: i64 = 0;
 const DEFAULT_PAGE_SIZE: i64 = 500;
 
-
 /**
  * List all taxonomy elements.
  */
@@ -31,7 +30,9 @@ pub async fn list_tsn(
     let taxonomy_elements = web::block(|| find_all_tsn(list_request)).await.unwrap();
     // Handle taxonomy elements result.
     match taxonomy_elements {
-        Ok(taxonomy_elements) => Ok(HttpResponse::Ok().json(TaxonomyListResponseType::from(taxonomy_elements))),
+        Ok(taxonomy_elements) => {
+            Ok(HttpResponse::Ok().json(TaxonomyListResponseType::from(taxonomy_elements)))
+        }
         Err(application_error) => Err(application_error),
     }
 }

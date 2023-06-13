@@ -1,6 +1,6 @@
-///
-/// Common list request object.
-///
+/**
+ * Taxonomy list request object.
+ */
 pub struct TaxonomyListRequest {
     pub start_index: i64,
     pub number_of_elements: i64,
@@ -18,6 +18,9 @@ impl TaxonomyListRequest {
     }
 }
 
+/**
+ * Get taxonomy element request object.
+ */
 pub struct TaxonomyGetRequest {
     pub tsn: i32,
 }
@@ -28,9 +31,9 @@ impl TaxonomyGetRequest {
     }
 }
 
-///
-/// List response object.
-///
+/**
+ * Taxonomy List response object.
+ */
 pub struct TaxonomyListResponse {
     pub start_index: i64,
     pub number_of_elements: i64,
@@ -64,6 +67,9 @@ impl TaxonomyListResponse {
     }
 }
 
+/**
+ * Single taxonomy lsit element.
+ */
 pub struct TaxonomyListElement {
     pub tsn: i32,
     pub name: String,
@@ -81,6 +87,9 @@ impl TaxonomyListElement {
     }
 }
 
+/**
+ * Taxonomy get response object.
+ */
 pub struct TaxonomyGetResponse {
     pub tsn: i32,
     pub name: String,
