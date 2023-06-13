@@ -1,10 +1,8 @@
 use serde::Serialize;
 
-use crate::taxonomy::model::{ TaxonomyListResponse, TaxonomyListElement, TaxonomyGetResponse } ;
+use crate::taxonomy::model::{TaxonomyGetResponse, TaxonomyListElement, TaxonomyListResponse};
 
-///
-/// Longname response object from the api
-///
+// Taxonomy list response object from the api
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct TaxonomyListResponseType {
@@ -12,9 +10,7 @@ pub struct TaxonomyListResponseType {
     pub pagination: PaginationType,
 }
 
-///
-/// Single Longname used in the list service.
-///
+// Single taxonomy element. USed in both list and single get services.
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct TaxonomyElementType {
@@ -28,6 +24,7 @@ pub struct TaxonomyElementType {
     children: Option<Vec<TaxonomyChildElementType>>,
 }
 
+// Taxonomy get child element.
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct TaxonomyChildElementType {
@@ -35,9 +32,7 @@ pub struct TaxonomyChildElementType {
     name: String,
 }
 
-///
-/// Converter from GEt response object to tsn response object.
-///
+// Converter from dao object to response object.
 impl From<TaxonomyGetResponse> for TaxonomyElementType {
     fn from(response: TaxonomyGetResponse) -> Self {
         TaxonomyElementType {
@@ -50,9 +45,7 @@ impl From<TaxonomyGetResponse> for TaxonomyElementType {
     }
 }
 
-///
-/// Common pagination response object.
-///
+// Common pagination response object.
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct PaginationType {
@@ -61,9 +54,7 @@ pub struct PaginationType {
     has_more_elements: bool,
 }
 
-///
-/// Converter from List response object to longname list object response.
-///
+// Converter from dao list taxonomy object to service list object response.
 impl From<TaxonomyListResponse> for TaxonomyListResponseType {
     fn from(list_response: TaxonomyListResponse) -> Self {
         let mut vec = Vec::new();
@@ -83,9 +74,7 @@ impl From<TaxonomyListResponse> for TaxonomyListResponseType {
     }
 }
 
-///
-///  Convert single Longname db object to response object.
-///
+// Convert single list taxonomy element from dao to response object.
 impl From<TaxonomyListElement> for TaxonomyElementType {
     fn from(list_element: TaxonomyListElement) -> Self {
         TaxonomyElementType {

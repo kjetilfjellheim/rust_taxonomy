@@ -67,28 +67,24 @@ pub struct TaxonomyListElement {
 }
 
 impl TaxonomyListElement {
-
     pub fn new(tsn: i32, name: String) -> TaxonomyListElement {
         TaxonomyListElement {
             tsn: tsn,
             name: name,
         }
     }
-
 }
 
 pub struct TaxonomyGetResponse {
     pub tsn: i32,
-    pub name: String
+    pub name: String,
 }
 
 impl TaxonomyGetResponse {
-
     pub fn new(tsn: i32, name: String) -> TaxonomyGetResponse {
         TaxonomyGetResponse {
             tsn: tsn,
             name: name,
         }
     }
-
 }

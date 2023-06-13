@@ -4,18 +4,18 @@ appenders:
     kind: file
     path: log/taxonomy.log
     encoder:
-      pattern: "{h({d(%Y-%m-%d %H:%M:%S)(utc)} - {l}: {m}{n})}"
+      pattern: "{h({d(%Y-%m-%d %H:%M:%S)(utc)} -{i} - {M} - {l}: {m}{n})}"
   requests:
     kind: file
     path: "log/requests.log"
     encoder:
-      pattern: "{h({d(%Y-%m-%d %H:%M:%S)(utc)} - {l}: {m}{n})}"
+      pattern: "{h({d(%Y-%m-%d %H:%M:%S)(utc)} -{i} - {l}: {m}{n})}"
 root:
-  level: warn
+  level: info
   appenders:
     - taxonomy
 loggers:
-  app::requests:
+  actix_web::middleware::logger:
     level: info
     appenders:
       - requests
