@@ -34,15 +34,17 @@ async fn main() -> Result<(), std::io::Error> {
     init_db();
     // Initalize route
     let server = HttpServer::new(|| App::new().wrap(Logger::default()).configure(init_routes));
-    // Bind the server to listen.
+    // Get server host from environment.
     let server_host = match env::var(SERVER_HOST) {
         Ok(val) => val,
         Err(err) => panic!("Missing server host: {}", err),
     };
+    // Get server port from environment.
     let server_port = match env::var(SERVER_PORT) {
         Ok(val) => val.parse::<u16>().expect("SERVER_PORT must be integer."),
         Err(err) => panic!("Missing server port: {}", err),
     };
+    // Bind the server to listen.
     let bind_result = server.bind((server_host, server_port));
     // Start server
     match bind_result {
