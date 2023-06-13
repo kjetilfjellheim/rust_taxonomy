@@ -3,9 +3,7 @@
  */
 use diesel::prelude::*;
 
-///
-/// Longname database object.
-///
+// Taxonomy unit database object.
 #[derive(Queryable, Selectable)]
 #[diesel(table_name = crate::taxonomy::dao::taxonomic_units)]
 #[diesel(check_for_backend(diesel::pg::Pg))]

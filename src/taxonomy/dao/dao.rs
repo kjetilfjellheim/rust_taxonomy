@@ -11,7 +11,7 @@ use diesel::prelude::*;
 use diesel::result::Error::*;
 use log::{debug, warn};
 
-/// Error messages.
+// Error messages.
 const QUERY_ERROR_STRING: &str = "Error querying taxonomic data";
 const LONGNAME_NOT_FOUND: &str = "Did not find that tsn number";
 

@@ -5,9 +5,7 @@ use serde::Serialize;
 use std::collections::HashMap;
 use std::fmt;
 
-///
-/// Common api response object from the service layer.
-///
+// Common api response object from the api layer.
 #[derive(Debug, Serialize)]
 pub struct AppErrorResponse {
     pub code: i32,
@@ -16,9 +14,7 @@ pub struct AppErrorResponse {
     pub params: Option<HashMap<String, String>>,
 }
 
-///
-/// Error types used in the service.
-///
+// Error types used in the code.
 #[derive(Debug, Serialize)]
 pub enum ErrorType {
     DbProgramError,
@@ -47,9 +43,7 @@ impl ErrorType {
     }
 }
 
-///
-/// Application error used the logic.
-///
+// Application errors used the logic.
 #[derive(Debug, Serialize)]
 pub struct ApplicationError {
     pub error_type: ErrorType,
@@ -71,6 +65,7 @@ impl fmt::Display for ApplicationError {
     }
 }
 
+// Convert application error to api response error.
 impl ResponseError for ApplicationError {
     fn error_response(&self) -> HttpResponse {
         warn!("Response failure: {}", &self);
