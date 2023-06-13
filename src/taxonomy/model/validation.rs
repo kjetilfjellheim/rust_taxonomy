@@ -12,7 +12,7 @@ const MIN_ELEMENTS: i64 = 0;
 
 // Validate list taxonomy input.
 pub fn validate_list_tsn_request(
-    list_request: &TaxonomyListRequest,
+    list_request: &TaxonomyListRequest
 ) -> Result<(), ApplicationError> {
     match MAX_ELEMENTS.cmp(&list_request.number_of_elements) {
         std::cmp::Ordering::Less => {

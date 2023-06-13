@@ -19,7 +19,7 @@ const LONGNAME_NOT_FOUND: &str = "Did not find that tsn number";
  * Find all longnames using start_index and page_size.
  */
 pub fn find_all_tsn(
-    list_request: TaxonomyListRequest,
+    list_request: TaxonomyListRequest
 ) -> Result<TaxonomyListResponse, ApplicationError> {
     // GEt connection
     let connection = &mut connection()?;
@@ -51,7 +51,7 @@ pub fn find_all_tsn(
  * Query single tsn
  */
 pub fn find_specific_tsn(
-    get_tsn_request: TaxonomyGetRequest,
+    get_tsn_request: TaxonomyGetRequest
 ) -> Result<TaxonomyGetResponse, ApplicationError> {
     //Get connection
     let connection = &mut connection()?;

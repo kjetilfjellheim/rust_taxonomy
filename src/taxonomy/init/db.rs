@@ -1,3 +1,4 @@
+use crate::taxonomy::model::{ApplicationError, ErrorType};
 use diesel::pg::PgConnection;
 use diesel::r2d2::ConnectionManager;
 use lazy_static::lazy_static;
@@ -5,7 +6,6 @@ use log::error;
 use r2d2::{self, PooledConnection};
 use std::env;
 use std::time::Duration;
-use crate::taxonomy::model::{ApplicationError, ErrorType};
 
 type Pool = r2d2::Pool<ConnectionManager<PgConnection>>;
 

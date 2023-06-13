@@ -51,7 +51,10 @@ pub struct ApplicationError {
 }
 
 impl ApplicationError {
-    pub fn new(error_type: ErrorType, message: String) -> Self {
+    pub fn new(
+        error_type: ErrorType,
+        message: String,
+    ) -> Self {
         ApplicationError {
             error_type: error_type,
             message: message,
@@ -60,7 +63,10 @@ impl ApplicationError {
 }
 
 impl fmt::Display for ApplicationError {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    fn fmt(
+        &self,
+        f: &mut fmt::Formatter,
+    ) -> fmt::Result {
         write!(f, "{}", self.message)
     }
 }

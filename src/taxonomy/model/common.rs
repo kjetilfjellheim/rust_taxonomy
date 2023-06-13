@@ -7,7 +7,10 @@ pub struct TaxonomyListRequest {
 }
 
 impl TaxonomyListRequest {
-    pub fn new(start_index: i64, number_of_elements: i64) -> TaxonomyListRequest {
+    pub fn new(
+        start_index: i64,
+        number_of_elements: i64,
+    ) -> TaxonomyListRequest {
         TaxonomyListRequest {
             start_index: start_index,
             number_of_elements: number_of_elements,
@@ -67,7 +70,10 @@ pub struct TaxonomyListElement {
 }
 
 impl TaxonomyListElement {
-    pub fn new(tsn: i32, name: String) -> TaxonomyListElement {
+    pub fn new(
+        tsn: i32,
+        name: String,
+    ) -> TaxonomyListElement {
         TaxonomyListElement {
             tsn: tsn,
             name: name,
@@ -81,7 +87,10 @@ pub struct TaxonomyGetResponse {
 }
 
 impl TaxonomyGetResponse {
-    pub fn new(tsn: i32, name: String) -> TaxonomyGetResponse {
+    pub fn new(
+        tsn: i32,
+        name: String,
+    ) -> TaxonomyGetResponse {
         TaxonomyGetResponse {
             tsn: tsn,
             name: name,
