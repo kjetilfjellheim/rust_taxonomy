@@ -14,7 +14,7 @@ serde = { version = "1.0.96", features = ["derive"]} #Used for conversion of res
 serde_json = "1.0.96" #Used for conversion of response/request objects
 r2d2 = "0.8.10" #Database connection pool
 log4rs = "1.2.0" #Logging framework
-log = "0.4.18" #
+log = "0.4.18" #Required for logging
 prometheus = "0.13.3" #For prometheus monitoring
 actix-web-prom = "0.6.0" #For prometheus monitoring
 systemstat = "0.2.3" #For monitoring cpu and memory usage
