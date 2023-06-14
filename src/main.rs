@@ -6,6 +6,7 @@ use actix_web::{middleware::Logger, web, App, HttpServer};
 use dotenv;
 use log4rs;
 use std::env;
+use actix_web_prom::{PrometheusMetricsBuilder};
 
 mod taxonomy;
 
@@ -32,8 +33,13 @@ async fn main() -> Result<(), std::io::Error> {
     }
     // Initialize the database connecrtion pool.
     init_db();
+    // Initalize prometheus metrics
+    let prometheus = PrometheusMetricsBuilder::new("api")
+        .endpoint("/metrics/prometheus")
+        .build()
+        .unwrap();
     // Initalize route
-    let server = HttpServer::new(|| App::new().wrap(Logger::default()).configure(init_routes));
+    let server = HttpServer::new(move || App::new().wrap(prometheus.clone()).wrap(Logger::default()).configure(init_routes));
     // Get server host from environment.
     let server_host = match env::var(SERVER_HOST) {
         Ok(val) => val,
