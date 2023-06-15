@@ -2,15 +2,24 @@ use crate::taxonomy::model::common::TaxonomyListRequest;
 use crate::taxonomy::model::errorcode::{ApplicationError, ErrorType};
 use std::str::FromStr;
 
+/// Error text if tsn is incorrect.
 const LONGNAME_TSN_INCORRECT: &str = "Tsn input must be 32 bit integer";
+/// Error text if number of elements is less than 0.
 const NUMBER_OF_ELEMENTS_MIN_CHECK: &str = "Number of elments must be greater than 0";
+/// Error text if number of elements is greater than 500.
 const NUMBER_OF_ELEMENTS_MAX_CHECK: &str = "Number of elements must be less than or euals to 500";
-
-// Constants used for validation. This should be must to configuration.
+/// Max number of elements in a page.
 const MAX_ELEMENTS: i64 = 500;
+/// Min number of elements in a page.
 const MIN_ELEMENTS: i64 = 0;
 
-// Validate list taxonomy input.
+///
+/// Validate list taxonomy input.
+/// Number of elements must be between 0 and 500.
+///
+/// @param list_request The list request to be validated
+/// @return input error empty success
+///
 pub fn validate_list_tsn_request(
     list_request: &TaxonomyListRequest
 ) -> Result<(), ApplicationError> {
@@ -35,7 +44,23 @@ pub fn validate_list_tsn_request(
     Ok(())
 }
 
-// Validate get taxonomy input.
+ ///
+ /// Validate get taxonomy input. Ok if it's an i32.
+ ///
+ /// @param tsn_str the string to validate
+ /// @return input error or i32 as success
+ ///
+ /// Example success
+ /// ```
+ /// let valid_str = "1";
+ /// assertEq(validate_specific_tsn_request(valid_str));
+ /// ```
+ /// Example error
+ /// ```
+ /// let valid_str = "2";
+ /// assertEq(validate_specific_tsn_request(valid_str));
+ /// ```
+ ///
 pub fn validate_specific_tsn_request(tsn_str: &String) -> Result<i32, ApplicationError> {
     match <i32 as FromStr>::from_str(&tsn_str) {
         Ok(val) => Ok(val),

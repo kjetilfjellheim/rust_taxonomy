@@ -1,3 +1,3 @@
 mod db;
 
-pub use db::{connection, init_db};
+pub use db::{connection, get_connection_pool_status, init_db};

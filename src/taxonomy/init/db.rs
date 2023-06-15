@@ -22,8 +22,9 @@ const DEFAULT_MIN_CONNECTION_POOL: &str = "1";
 const DEFAULT_CONNECTION_TIMEOUT: &str = "3";
 const DEFAULT_MAX_LIFETIME: &str = "30";
 
-// Initialize connection pool
 lazy_static! {
+
+    // Initialize connection pool
     static ref POOL: Pool = {
         // Get database url from environment.
         let db_url = env::var(DB_URL_PROP).expect("Database url not set");
@@ -64,20 +65,32 @@ lazy_static! {
     };
 }
 
-// Used to start db connection initialization.
+/**
+ * Used to start db connection initialization.
+ */
 pub fn init_db() {
     lazy_static::initialize(&POOL);
+
     let _conn: PooledConnection<ConnectionManager<PgConnection>> =
         connection().expect("Failed to get db connection");
 }
 
-// Get connection from connection pool
+/**
+ * Get connection from connection pool
+ */
 pub fn connection() -> Result<PooledConnection<ConnectionManager<PgConnection>>, ApplicationError> {
     POOL.get().map_err(map_connection_error)
 }
-
-// If error occurs during get connection.
+/**
+ * If error occurs during get connection.
+ */
 fn map_connection_error(error: r2d2::Error) -> ApplicationError {
     error!("Failed to get connection: {}", error);
     ApplicationError::new(ErrorType::ConnectionError, error.to_string())
+}
+/**
+ * Get connection pool state
+ */
+pub fn get_connection_pool_status() -> (u32, u32) {
+    (POOL.state().connections, POOL.state().idle_connections)
 }

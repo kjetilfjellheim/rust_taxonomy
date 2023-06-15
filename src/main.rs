@@ -1,12 +1,15 @@
 extern crate diesel;
 
-use crate::taxonomy::init_db;
+use crate::taxonomy::{get_connection_pool_status, init_db};
 use crate::taxonomy::{get_specific_tsn, list_tsn};
 use actix_web::{middleware::Logger, web, App, HttpServer};
+use actix_web_prom::{PrometheusMetrics, PrometheusMetricsBuilder};
+use core::time::Duration;
 use dotenv;
 use log4rs;
+use prometheus::IntGauge;
 use std::env;
-use actix_web_prom::{PrometheusMetricsBuilder};
+use std::thread;
 
 mod taxonomy;
 
@@ -38,8 +41,22 @@ async fn main() -> Result<(), std::io::Error> {
         .endpoint("/metrics/prometheus")
         .build()
         .unwrap();
+    // Initialize custom metrics
+    let max_connections_gauge =
+        IntGauge::new("max_connections", "Connection pool maximum").unwrap();
+    let idle_connections_gauge = IntGauge::new("idle_connections", "Connection pool idle").unwrap();
+    //Register custom prometheus metrics
+    register_promethius_metrics(&prometheus, &max_connections_gauge);
+    register_promethius_metrics(&prometheus, &idle_connections_gauge);
+    // Start to gather db metrics
+    gather_db_metrics(max_connections_gauge, idle_connections_gauge);
     // Initalize route
-    let server = HttpServer::new(move || App::new().wrap(prometheus.clone()).wrap(Logger::default()).configure(init_routes));
+    let server = HttpServer::new(move || {
+        App::new()
+            .wrap(prometheus.clone())
+            .wrap(Logger::default())
+            .configure(init_routes)
+    });
     // Get server host from environment.
     let server_host = match env::var(SERVER_HOST) {
         Ok(val) => val,
@@ -64,6 +81,34 @@ async fn main() -> Result<(), std::io::Error> {
 /**
  * Initialize service routes.
  */
-pub fn init_routes(config: &mut web::ServiceConfig) {
+fn init_routes(config: &mut web::ServiceConfig) {
     config.service(get_specific_tsn).service(list_tsn);
+}
+
+/**
+ * Register prometheus metrics
+ */
+fn register_promethius_metrics(
+    prometheus_metrics: &PrometheusMetrics,
+    gauge: &IntGauge,
+) {
+    prometheus_metrics
+        .registry
+        .register(Box::new(gauge.clone()))
+        .unwrap();
+}
+
+/**
+ * Set max and idle connections for monitoring.
+ */
+fn gather_db_metrics(
+    max_connections_gauge: IntGauge,
+    idle_connections_gauge: IntGauge,
+) {
+    thread::spawn(move || loop {
+        let pool_state = get_connection_pool_status();
+        max_connections_gauge.set(pool_state.0 as i64);
+        idle_connections_gauge.set(pool_state.1 as i64);
+        thread::sleep(Duration::from_secs(1));
+    });
 }
