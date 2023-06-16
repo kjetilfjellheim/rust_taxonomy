@@ -11,17 +11,18 @@ use diesel::prelude::*;
 use diesel::result::Error::*;
 use log::{debug, warn};
 
-// Error messages.
+/// Error text if unknown error occurs during query.
 const QUERY_ERROR_STRING: &str = "Error querying taxonomic data";
-const LONGNAME_NOT_FOUND: &str = "Did not find that tsn number";
+/// Error text if taxonomy is not found.
+const TAXONOMY_NOT_FOUND: &str = "Did not find that tsn number";
 
-/**
- * Find all longnames using start_index and page_size.
- */
+///
+/// Find all taxonomy elements using start_index and page_size.
+///
 pub fn find_all_tsn(
     list_request: TaxonomyListRequest
 ) -> Result<TaxonomyListResponse, ApplicationError> {
-    // GEt connection
+    // Get connection
     let connection = &mut connection()?;
     // Query list
     let query_result = taxonomic_units_dsl
@@ -47,9 +48,9 @@ pub fn find_all_tsn(
     }
 }
 
-/**
- * Query single tsn
- */
+///
+/// Query single taxonomy element.
+///
 pub fn find_specific_tsn(
     get_tsn_request: TaxonomyGetRequest
 ) -> Result<TaxonomyGetResponse, ApplicationError> {
@@ -70,7 +71,7 @@ pub fn find_specific_tsn(
             debug!("Did not find tsn {}", get_tsn_request.tsn);
             Err(ApplicationError::new(
                 ErrorType::NotFoundError,
-                LONGNAME_NOT_FOUND.to_string(),
+                TAXONOMY_NOT_FOUND.to_string(),
             ))
         }
         Err(error) => {
@@ -83,9 +84,9 @@ pub fn find_specific_tsn(
     }
 }
 
-/**
- * Convert queries elements.
- */
+///
+/// Convert queries elements.
+///
 fn convert_queried_elements(queried_result: Vec<TaxonomicUnit>) -> Vec<TaxonomyListElement> {
     queried_result
         .into_iter()

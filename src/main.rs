@@ -13,13 +13,16 @@ use std::thread;
 
 mod taxonomy;
 
+/// Property in .env for loggin configuration.
 const LOG_FILE_PROP: &str = "LOG_FILE";
+/// Property in .env for server host.
 const SERVER_HOST: &str = "SERVER_HOST";
+/// Property in .env for server port.
 const SERVER_PORT: &str = "SERVER_PORT";
 
-/**
- * Initalize and start the api.
- */
+///
+/// Initalize and start the api.
+///
 #[actix_rt::main]
 async fn main() -> Result<(), std::io::Error> {
     // Initialize the environment variables.
@@ -78,16 +81,16 @@ async fn main() -> Result<(), std::io::Error> {
     }
 }
 
-/**
- * Initialize service routes.
- */
+///
+/// Initialize service routes.
+///
 fn init_routes(config: &mut web::ServiceConfig) {
     config.service(get_specific_tsn).service(list_tsn);
 }
 
-/**
- * Register prometheus metrics
- */
+///
+/// Register prometheus metrics
+///
 fn register_promethius_metrics(
     prometheus_metrics: &PrometheusMetrics,
     gauge: &IntGauge,
@@ -98,9 +101,9 @@ fn register_promethius_metrics(
         .unwrap();
 }
 
-/**
- * Set max and idle connections for monitoring.
- */
+///
+/// Start monitoring process of db connections.
+///
 fn gather_db_metrics(
     max_connections_gauge: IntGauge,
     idle_connections_gauge: IntGauge,

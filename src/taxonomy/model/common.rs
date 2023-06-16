@@ -1,8 +1,10 @@
-/**
- * Taxonomy list request object.
- */
+///
+/// Internal application model for taxonomy list requests.
+///
 pub struct TaxonomyListRequest {
+    /// Start index starts with 0 to infinite.
     pub start_index: i64,
+    /// Max number of elements to return.
     pub number_of_elements: i64,
 }
 
@@ -18,10 +20,11 @@ impl TaxonomyListRequest {
     }
 }
 
-/**
- * Get taxonomy element request object.
- */
+///
+/// Internal application get tsn request.
+///
 pub struct TaxonomyGetRequest {
+    /// Taxonomy identifier.
     pub tsn: i32,
 }
 
@@ -31,13 +34,17 @@ impl TaxonomyGetRequest {
     }
 }
 
-/**
- * Taxonomy List response object.
- */
+///
+/// Internal Taxonomy list response object.
+///
 pub struct TaxonomyListResponse {
+    /// Start index, always the same as in request.
     pub start_index: i64,
+    /// Number of elements returned.
     pub number_of_elements: i64,
+    /// Do the list contain more data.
     pub has_more_elements: bool,
+    /// Data to be returned.
     pub elements: Vec<TaxonomyListElement>,
 }
 
@@ -67,11 +74,13 @@ impl TaxonomyListResponse {
     }
 }
 
-/**
- * Single taxonomy lsit element.
- */
+///
+/// Internal taxonomy list element,
+///
 pub struct TaxonomyListElement {
+    /// Taxonomy identifier.
     pub tsn: i32,
+    /// Taxononomy name.
     pub name: String,
 }
 
@@ -87,11 +96,13 @@ impl TaxonomyListElement {
     }
 }
 
-/**
- * Taxonomy get response object.
- */
+///
+///  Internal taxonomy get response.
+///
 pub struct TaxonomyGetResponse {
+    /// Taxonomy identifier.
     pub tsn: i32,
+    /// Taxononomy name.
     pub name: String,
 }
 

@@ -5,21 +5,28 @@ use serde::Serialize;
 use std::collections::HashMap;
 use std::fmt;
 
-// Common api response object from the api layer.
+/// Common api response object from the api layer.
 #[derive(Debug, Serialize)]
 pub struct AppErrorResponse {
+    /// Error code specifiying the error.
     pub code: i32,
+    /// Detailed error text.
     pub message: String,
+    /// Optional element of possible extra information.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub params: Option<HashMap<String, String>>,
 }
 
-// Error types used in the code.
+/// Error types used in the code.
 #[derive(Debug, Serialize)]
 pub enum ErrorType {
+    /// Occurs if a query fails with unknown cause.
     DbProgramError,
+    /// Problem getting connection.
     ConnectionError,
+    /// Element was not found.
     NotFoundError,
+    /// Occurs during request input validation.
     InputError,
 }
 
@@ -43,10 +50,12 @@ impl ErrorType {
     }
 }
 
-// Application errors used the logic.
+/// Application errors used the logic.
 #[derive(Debug, Serialize)]
 pub struct ApplicationError {
+    /// Error type that occured.
     pub error_type: ErrorType,
+    /// Error message describing problem.
     pub message: String,
 }
 
@@ -71,7 +80,7 @@ impl fmt::Display for ApplicationError {
     }
 }
 
-// Convert application error to api response error.
+/// Convert application error to api response error.
 impl ResponseError for ApplicationError {
     fn error_response(&self) -> HttpResponse {
         warn!("Response failure: {}", &self);

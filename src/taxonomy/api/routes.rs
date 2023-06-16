@@ -6,13 +6,14 @@ use crate::taxonomy::dao::{find_all_tsn, find_specific_tsn};
 use crate::taxonomy::model::{validate_list_tsn_request, validate_specific_tsn_request};
 use crate::taxonomy::model::{ApplicationError, TaxonomyGetRequest, TaxonomyListRequest};
 
-// Common constants. Move these to the configuration later.
+///Default value if start index is not specified.
 const DEFAULT_START_INDEX: i64 = 0;
+/// Default value if page size is not specified.
 const DEFAULT_PAGE_SIZE: i64 = 500;
 
-/**
- * List all taxonomy elements.
- */
+///
+/// List taxonomy elements.
+///
 #[get("/taxonomy")]
 pub async fn list_tsn(
     list_request_params: Query<TaxonomyListRequestQuery>
@@ -37,9 +38,9 @@ pub async fn list_tsn(
     }
 }
 
-/**
- * Get single taxonomy element.
- */
+///
+/// Get single taxonomy element.
+///
 #[get("/taxonomy/{tsn}")]
 pub async fn get_specific_tsn(tsn: Path<String>) -> Result<HttpResponse, ApplicationError> {
     //Validate taxonomy value.

@@ -9,17 +9,24 @@ use std::time::Duration;
 
 type Pool = r2d2::Pool<ConnectionManager<PgConnection>>;
 
-// Properties for database connection pool.
+/// Property name in .env used for DB connection.
 const DB_URL_PROP: &str = "DB_URL";
+/// Property name in .env used to define min number of connection.
 const DB_MIN_CONNECTION_POOL_PROP: &str = "DB_MIN_CONNECTION_POOL";
+/// Property name in .env used to define max number of connection.
 const DB_MAX_CONNECTION_POOL_PROP: &str = "DB_MAX_CONNECTION_POOL";
+/// Property name in .env used to define connection timeout.
 const DB_CONNECTION_TIMEOUT: &str = "DB_CONNECTION_TIMEOUT";
+/// Property name in .env used to define max lifetime of connection.
 const DB_MAX_LIFETIME: &str = "DB_MAX_LIFETIME";
 
-// Default database connection pool settings.
+/// If max connection is not defined in .env use this value.
 const DEFAULT_MAX_CONNECTION_POOL: &str = "20";
+/// If min connection is not defined in .env use this value.
 const DEFAULT_MIN_CONNECTION_POOL: &str = "1";
+/// If connection timeout is not defined  in .env use this value.
 const DEFAULT_CONNECTION_TIMEOUT: &str = "3";
+/// If max lifetime is not defined  in .env use this value.
 const DEFAULT_MAX_LIFETIME: &str = "30";
 
 lazy_static! {
@@ -65,9 +72,9 @@ lazy_static! {
     };
 }
 
-/**
- * Used to start db connection initialization.
- */
+///
+/// Initialize database connection.
+///
 pub fn init_db() {
     lazy_static::initialize(&POOL);
 
@@ -75,22 +82,22 @@ pub fn init_db() {
         connection().expect("Failed to get db connection");
 }
 
-/**
- * Get connection from connection pool
- */
+///
+/// Get connection from connection pool
+///
 pub fn connection() -> Result<PooledConnection<ConnectionManager<PgConnection>>, ApplicationError> {
     POOL.get().map_err(map_connection_error)
 }
-/**
- * If error occurs during get connection.
- */
+///
+/// If error occurs during get connection.
+///
 fn map_connection_error(error: r2d2::Error) -> ApplicationError {
     error!("Failed to get connection: {}", error);
     ApplicationError::new(ErrorType::ConnectionError, error.to_string())
 }
-/**
- * Get connection pool state
- */
+///
+/// Get connection pool state
+///
 pub fn get_connection_pool_status() -> (u32, u32) {
     (POOL.state().connections, POOL.state().idle_connections)
 }

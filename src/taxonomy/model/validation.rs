@@ -1,3 +1,4 @@
+/// Validation model
 use crate::taxonomy::model::common::TaxonomyListRequest;
 use crate::taxonomy::model::errorcode::{ApplicationError, ErrorType};
 use std::str::FromStr;
@@ -19,6 +20,7 @@ const MIN_ELEMENTS: i64 = 0;
 ///
 /// @param list_request The list request to be validated
 /// @return input error empty success
+///
 ///
 pub fn validate_list_tsn_request(
     list_request: &TaxonomyListRequest
