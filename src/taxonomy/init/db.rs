@@ -77,7 +77,6 @@ lazy_static! {
 ///
 pub fn init_db() {
     lazy_static::initialize(&POOL);
-
     let _conn: PooledConnection<ConnectionManager<PgConnection>> =
         connection().expect("Failed to get db connection");
 }
@@ -91,12 +90,18 @@ pub fn connection() -> Result<PooledConnection<ConnectionManager<PgConnection>>,
 ///
 /// If error occurs during get connection.
 ///
+///  @param error r2d2 error
+///  @returns Application error.
+///
 fn map_connection_error(error: r2d2::Error) -> ApplicationError {
     error!("Failed to get connection: {}", error);
     ApplicationError::new(ErrorType::ConnectionError, error.to_string())
 }
 ///
-/// Get connection pool state
+/// Get connection pool state.
+///
+/// @returns A tuple containing max connections and idle connections.
+///
 ///
 pub fn get_connection_pool_status() -> (u32, u32) {
     (POOL.state().connections, POOL.state().idle_connections)
