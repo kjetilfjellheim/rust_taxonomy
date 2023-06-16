@@ -1,9 +1,11 @@
 use crate::taxonomy::api::request::TaxonomyListRequestQuery;
-use actix_web::{get, web, web::Path, web::Query, HttpResponse};
 use crate::taxonomy::api::response::{TaxonomyElementType, TaxonomyListResponseType};
 use crate::taxonomy::model::{validate_list_tsn_request, validate_specific_tsn_request};
 use crate::taxonomy::model::{ApplicationError, TaxonomyGetRequest, TaxonomyListRequest};
-use crate::taxonomy::service::{find_taxonomies as find_taxonomies_service, find_taxonomy as find_taxonomy_service};
+use crate::taxonomy::service::{
+    find_taxonomies as find_taxonomies_service, find_taxonomy as find_taxonomy_service,
+};
+use actix_web::{get, web, web::Path, web::Query, HttpResponse};
 
 ///Default value if start index is not specified.
 const DEFAULT_START_INDEX: i64 = 0;
@@ -27,7 +29,9 @@ pub async fn find_taxonomies(
     // Validate list request.
     validate_list_tsn_request(&list_request)?;
     // Get taxonomy elements.
-    let taxonomy_elements = web::block(|| find_taxonomies_service(list_request)).await.unwrap();
+    let taxonomy_elements = web::block(|| find_taxonomies_service(list_request))
+        .await
+        .unwrap();
     // Handle taxonomy elements result.
     match taxonomy_elements {
         Ok(taxonomy_elements) => {

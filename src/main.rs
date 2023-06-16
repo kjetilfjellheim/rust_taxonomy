@@ -1,7 +1,7 @@
 extern crate diesel;
 
+use crate::taxonomy::{find_taxonomies, find_taxonomy};
 use crate::taxonomy::{get_connection_pool_status, init_db};
-use crate::taxonomy::{find_taxonomy, find_taxonomies};
 use actix_web::{middleware::Logger, web, App, HttpServer};
 use actix_web_prom::{PrometheusMetrics, PrometheusMetricsBuilder};
 use core::time::Duration;

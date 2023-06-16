@@ -1,9 +1,12 @@
 use crate::taxonomy::connection;
-use crate::taxonomy::dao::{find_taxonomies as find_taxonomies_dao, find_taxonomy as find_taxonomy_dao};
 use crate::taxonomy::dao::TaxonomicUnit;
+use crate::taxonomy::dao::{
+    find_taxonomies as find_taxonomies_dao, find_taxonomy as find_taxonomy_dao,
+};
 use crate::taxonomy::model::ErrorType;
 use crate::taxonomy::model::{
-    ApplicationError, TaxonomyListElement, TaxonomyListRequest, TaxonomyListResponse, TaxonomyGetRequest, TaxonomyGetResponse,
+    ApplicationError, TaxonomyGetRequest, TaxonomyGetResponse, TaxonomyListElement,
+    TaxonomyListRequest, TaxonomyListResponse,
 };
 use log::warn;
 
@@ -21,7 +24,6 @@ pub fn find_taxonomies(
 
     conn.build_transaction().read_only().run(
         |conn| -> Result<TaxonomyListResponse, ApplicationError> {
-
             let query_result: Result<Vec<TaxonomicUnit>, diesel::result::Error> =
                 find_taxonomies_dao(
                     conn,
@@ -44,39 +46,39 @@ pub fn find_taxonomies(
                     ))
                 }
             } // end match
-
-        } // end transaction
+        }, // end transaction
     )
-
 }
 
 ///
 /// Get specific taxonomy
 ///
-pub fn find_taxonomy(taxonomy_request: TaxonomyGetRequest) -> Result<TaxonomyGetResponse, ApplicationError> {
-// Get connection
+pub fn find_taxonomy(
+    taxonomy_request: TaxonomyGetRequest
+) -> Result<TaxonomyGetResponse, ApplicationError> {
+    // Get connection
     let mut conn = connection()?;
 
     conn.build_transaction().read_only().run(
         |conn| -> Result<TaxonomyGetResponse, ApplicationError> {
-
             let taxonomy_unit: Result<TaxonomicUnit, diesel::result::Error> =
-                find_taxonomy_dao(
-                    conn,
-                    taxonomy_request.tsn
-                );
+                find_taxonomy_dao(conn, taxonomy_request.tsn);
             // Test query result.
             match taxonomy_unit {
                 Ok(query_result) => Ok(TaxonomyGetResponse::new(
                     query_result.tsn,
-                    query_result.complete_name
-
+                    query_result.complete_name,
                 )),
-                Err(diesel::result::Error::NotFound) => Err(ApplicationError::new(ErrorType::NotFoundError, TAXONOMY_NOT_FOUND.to_string())),
-                Err(_) => Err(ApplicationError::new(ErrorType::DbProgramError, QUERY_ERROR_STRING.to_string())),
+                Err(diesel::result::Error::NotFound) => Err(ApplicationError::new(
+                    ErrorType::NotFoundError,
+                    TAXONOMY_NOT_FOUND.to_string(),
+                )),
+                Err(_) => Err(ApplicationError::new(
+                    ErrorType::DbProgramError,
+                    QUERY_ERROR_STRING.to_string(),
+                )),
             } // end match
-
-        } // end transaction
+        }, // end transaction
     )
 }
 
