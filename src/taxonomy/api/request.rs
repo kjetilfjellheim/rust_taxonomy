@@ -1,5 +1,4 @@
 /// Models used to represent the request objects used in the api.
-
 use serde::Deserialize;
 
 /// Model used to represent input request to list taxonomy service.

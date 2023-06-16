@@ -1,7 +1,7 @@
 extern crate diesel;
 
 use crate::taxonomy::{get_connection_pool_status, init_db};
-use crate::taxonomy::{get_specific_tsn, list_tsn};
+use crate::taxonomy::{find_taxonomy, find_taxonomies};
 use actix_web::{middleware::Logger, web, App, HttpServer};
 use actix_web_prom::{PrometheusMetrics, PrometheusMetricsBuilder};
 use core::time::Duration;
@@ -85,7 +85,7 @@ async fn main() -> Result<(), std::io::Error> {
 /// Initialize service routes.
 ///
 fn init_routes(config: &mut web::ServiceConfig) {
-    config.service(get_specific_tsn).service(list_tsn);
+    config.service(find_taxonomy).service(find_taxonomies);
 }
 
 ///

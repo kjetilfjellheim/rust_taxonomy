@@ -46,23 +46,23 @@ pub fn validate_list_tsn_request(
     Ok(())
 }
 
- ///
- /// Validate get taxonomy input. Ok if it's an i32.
- ///
- /// @param tsn_str the string to validate
- /// @return input error or i32 as success
- ///
- /// Example success
- /// ```
- /// let valid_str = "1";
- /// assertEq(validate_specific_tsn_request(valid_str));
- /// ```
- /// Example error
- /// ```
- /// let valid_str = "2";
- /// assertEq(validate_specific_tsn_request(valid_str));
- /// ```
- ///
+///
+/// Validate get taxonomy input. Ok if it's an i32.
+///
+/// @param tsn_str the string to validate
+/// @return input error or i32 as success
+///
+/// Example success
+/// ```
+/// let valid_str = "1";
+/// assertEq(validate_specific_tsn_request(valid_str));
+/// ```
+/// Example error
+/// ```
+/// let valid_str = "2";
+/// assertEq(validate_specific_tsn_request(valid_str));
+/// ```
+///
 pub fn validate_specific_tsn_request(tsn_str: &String) -> Result<i32, ApplicationError> {
     match <i32 as FromStr>::from_str(&tsn_str) {
         Ok(val) => Ok(val),

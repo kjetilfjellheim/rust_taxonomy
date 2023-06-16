@@ -4,6 +4,8 @@ use log::warn;
 use serde::Serialize;
 use std::collections::HashMap;
 use std::fmt;
+use diesel::result::Error::*;
+
 
 /// Common api response object from the api layer.
 #[derive(Debug, Serialize)]
@@ -90,5 +92,14 @@ impl ResponseError for ApplicationError {
             params: None,
         };
         HttpResponse::build(self.error_type.get_statuscode()).json(&error_response)
+    }
+}
+
+impl From<diesel::result::Error> for ApplicationError {
+    fn from(error: diesel::result::Error) -> Self {
+        match error {
+            NotFound => ApplicationError::new(ErrorType::NotFoundError, error.to_string()), // TODO Fix this as environment.
+            _ => ApplicationError::new(ErrorType::DbProgramError, error.to_string())
+        }
     }
 }
