@@ -10,11 +10,13 @@ use diesel::prelude::*;
 pub struct TaxonomicUnit {
     pub tsn: i32,
     pub complete_name: String,
+    pub parent_tsn: i32
 }
 
 diesel::table! {
     taxonomic_units (tsn) {
         tsn -> Int4,
         complete_name -> Varchar,
+        parent_tsn -> Int4
     }
 }

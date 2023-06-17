@@ -104,16 +104,47 @@ pub struct TaxonomyGetResponse {
     pub tsn: i32,
     /// Taxononomy name.
     pub name: String,
+    /// Parennt tsn
+    pub parent_tsn: Option<i32>,
+    /// Parent taxonomy name
+    pub parent_name: Option<String>,
+    /// Children taxonomy
+    pub children: Vec<TaxonomyGetChild>,
 }
 
 impl TaxonomyGetResponse {
     pub fn new(
         tsn: i32,
         name: String,
+        parent_tsn: Option<i32>,
+        parent_name: Option<String>,
+        children: Vec<TaxonomyGetChild>
     ) -> TaxonomyGetResponse {
         TaxonomyGetResponse {
             tsn: tsn,
             name: name,
+            parent_tsn: parent_tsn,
+            parent_name: parent_name,
+            children: children
+        }
+    }
+}
+
+pub struct TaxonomyGetChild {
+    /// Child taxonomy tsn
+    pub tsn: i32,
+    /// Chhild taxonomy name
+    pub name: String,
+}
+
+impl TaxonomyGetChild {
+    pub fn new(
+        tsn: i32,
+        name: String,
+    ) -> TaxonomyGetChild {
+        TaxonomyGetChild {
+            tsn: tsn,
+            name: name
         }
     }
 }

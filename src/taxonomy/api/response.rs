@@ -1,6 +1,6 @@
 use serde::Serialize;
 
-use crate::taxonomy::model::{TaxonomyGetResponse, TaxonomyListElement, TaxonomyListResponse};
+use crate::taxonomy::model::{TaxonomyGetResponse, TaxonomyListElement, TaxonomyListResponse, TaxonomyGetChild};
 
 ///
 /// Taxonomy list response object from the api.
@@ -24,8 +24,7 @@ pub struct TaxonomyElementType {
     parent_tsn: Option<i32>,
     #[serde(skip_serializing_if = "Option::is_none")]
     parent_name: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    children: Option<Vec<TaxonomyChildElementType>>,
+    children: Vec<TaxonomyChildElementType>,
 }
 
 ///
@@ -43,9 +42,18 @@ impl From<TaxonomyGetResponse> for TaxonomyElementType {
         TaxonomyElementType {
             tsn: response.tsn,
             name: response.name,
-            parent_tsn: None,
-            parent_name: None,
-            children: None,
+            parent_tsn: response.parent_tsn,
+            parent_name: response.parent_name,
+            children: response.children.iter().map(|child| { TaxonomyChildElementType::from(child) } ).collect(),
+        }
+    }
+}
+
+impl From<&TaxonomyGetChild> for TaxonomyChildElementType {
+    fn from(child_element: &TaxonomyGetChild) -> Self {
+        TaxonomyChildElementType {
+            tsn: child_element.tsn,
+            name: child_element.name.clone()
         }
     }
 }
@@ -87,7 +95,7 @@ impl From<TaxonomyListElement> for TaxonomyElementType {
             name: list_element.name.clone(),
             parent_tsn: None,
             parent_name: None,
-            children: None,
+            children: vec![],
         }
     }
 }

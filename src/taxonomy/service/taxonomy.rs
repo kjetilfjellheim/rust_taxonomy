@@ -1,14 +1,15 @@
 use crate::taxonomy::connection;
-use crate::taxonomy::dao::TaxonomicUnit;
+use crate::taxonomy::dao::{TaxonomicUnit};
 use crate::taxonomy::dao::{
-    find_taxonomies as find_taxonomies_dao, find_taxonomy as find_taxonomy_dao,
+    find_taxonomies as find_taxonomies_dao, find_taxonomy as find_taxonomy_dao, find_child_taxonomies as find_child_taxonomies_dao
 };
 use crate::taxonomy::model::ErrorType;
 use crate::taxonomy::model::{
-    ApplicationError, TaxonomyGetRequest, TaxonomyGetResponse, TaxonomyListElement,
+    ApplicationError, TaxonomyGetRequest, TaxonomyGetResponse, TaxonomyListElement, TaxonomyGetChild,
     TaxonomyListRequest, TaxonomyListResponse,
 };
 use log::warn;
+
 
 /// Error text if unknown error occurs during query.
 const QUERY_ERROR_STRING: &str = "Error querying taxonomic data";
@@ -63,12 +64,10 @@ pub fn find_taxonomy(
         |conn| -> Result<TaxonomyGetResponse, ApplicationError> {
             let taxonomy_unit: Result<TaxonomicUnit, diesel::result::Error> =
                 find_taxonomy_dao(conn, taxonomy_request.tsn);
-            // Test query result.
-            match taxonomy_unit {
-                Ok(query_result) => Ok(TaxonomyGetResponse::new(
-                    query_result.tsn,
-                    query_result.complete_name,
-                )),
+           match taxonomy_unit {
+                Ok(taxonomy_unit) => {
+                    Ok(taxonomy_unit)
+                },
                 Err(diesel::result::Error::NotFound) => Err(ApplicationError::new(
                     ErrorType::NotFoundError,
                     TAXONOMY_NOT_FOUND.to_string(),
@@ -77,8 +76,41 @@ pub fn find_taxonomy(
                     ErrorType::DbProgramError,
                     QUERY_ERROR_STRING.to_string(),
                 )),
-            } // end match
-        }, // end transaction
+            }.and_then(|taxonomy_unit: TaxonomicUnit| {
+                let child_taxonomies: Result<Vec<TaxonomicUnit>, diesel::result::Error> = find_child_taxonomies_dao(conn, taxonomy_unit.tsn);
+                let mut parent_tsn: Option<i32> = None;
+                let mut parent_name: Option<String> = None;
+                let parent_taxonomy = find_taxonomy_dao(conn, taxonomy_unit.parent_tsn);
+                let children = match child_taxonomies {
+                    Ok(children) => {
+                        children.iter().map(|taxonomy_unit: &TaxonomicUnit| { TaxonomyGetChild::new(taxonomy_unit.tsn, taxonomy_unit.complete_name.clone()) }).collect()
+                    },
+                    Err(err)  => {
+                        warn!("Error occured quering child taxonomy: {}", err);
+                        return Err(ApplicationError::new(ErrorType::DbProgramError, QUERY_ERROR_STRING.to_string()))
+                    }
+                };
+                if taxonomy_unit.tsn != taxonomy_unit.parent_tsn && taxonomy_unit.parent_tsn != 0 {
+                    match parent_taxonomy {
+                        Ok(parent_taxonomy) =>  {
+                            parent_tsn = Some(taxonomy_unit.parent_tsn);
+                            parent_name = Some(parent_taxonomy.complete_name);
+                        },
+                        Err(err) => {
+                            warn!("Error occured quering parent taxonomy: {}", err);
+                            return Err(ApplicationError::new(ErrorType::DbProgramError, QUERY_ERROR_STRING.to_string()))
+                        }
+                    }
+                }
+                Ok(TaxonomyGetResponse::new(
+                    taxonomy_unit.tsn,
+                    taxonomy_unit.complete_name,
+                    parent_tsn,
+                    parent_name,
+                    children
+                ))
+            }) // end match
+        } // end transaction
     )
 }
 

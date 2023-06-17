@@ -3,7 +3,7 @@ mod errorcode;
 mod validation;
 
 pub use common::{
-    TaxonomyGetRequest, TaxonomyGetResponse, TaxonomyListElement, TaxonomyListRequest,
+    TaxonomyGetRequest, TaxonomyGetResponse, TaxonomyListElement, TaxonomyListRequest, TaxonomyGetChild,
     TaxonomyListResponse,
 };
 pub use errorcode::{ApplicationError, ErrorType};
