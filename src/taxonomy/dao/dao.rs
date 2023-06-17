@@ -27,6 +27,7 @@ pub fn find_child_taxonomies(
 ) -> Result<Vec<TaxonomicUnit>, diesel::result::Error> {
     taxonomic_units_dsl
         .select(TaxonomicUnit::as_select())
+        .order_by(taxonomic_units_schema::parent_tsn.asc())
         .filter(taxonomic_units_schema::parent_tsn.eq(parent_tsn))
         .load(connection)
 }
