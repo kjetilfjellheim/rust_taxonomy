@@ -1,7 +1,7 @@
-use crate::taxonomy::dao::taxonomic_units::dsl::taxonomic_units as taxonomic_units_dsl;
+use crate::taxonomy::dao::schema::v_taxonomy as taxonomic_units_schema;
+use crate::taxonomy::dao::v_taxonomy::dsl::v_taxonomy as taxonomic_units_dsl;
 use crate::taxonomy::dao::TaxonomicUnit;
 use diesel::prelude::*;
-use crate::taxonomy::dao::schema::taxonomic_units as taxonomic_units_schema;
 
 ///
 /// Find taxonomies elements using start_index and page_size.
@@ -23,7 +23,7 @@ pub fn find_taxonomies(
 ///
 pub fn find_child_taxonomies(
     connection: &mut PgConnection,
-    parent_tsn: i32
+    parent_tsn: i32,
 ) -> Result<Vec<TaxonomicUnit>, diesel::result::Error> {
     taxonomic_units_dsl
         .select(TaxonomicUnit::as_select())

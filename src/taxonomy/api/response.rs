@@ -1,6 +1,8 @@
 use serde::Serialize;
 
-use crate::taxonomy::model::{TaxonomyGetResponse, TaxonomyListElement, TaxonomyListResponse, TaxonomyGetChild};
+use crate::taxonomy::model::{
+    TaxonomyGetChild, TaxonomyGetResponse, TaxonomyListElement, TaxonomyListResponse,
+};
 
 ///
 /// Taxonomy list response object from the api.
@@ -8,7 +10,7 @@ use crate::taxonomy::model::{TaxonomyGetResponse, TaxonomyListElement, TaxonomyL
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct TaxonomyListResponseType {
-    pub tsn: Vec<TaxonomyElementType>,
+    pub taxonomy: Vec<TaxonomyElementType>,
     pub pagination: PaginationType,
 }
 
@@ -20,11 +22,14 @@ pub struct TaxonomyListResponseType {
 pub struct TaxonomyElementType {
     tsn: i32,
     name: String,
+    kingdom_name: String,
+    rank_name: String,
     #[serde(skip_serializing_if = "Option::is_none")]
     parent_tsn: Option<i32>,
     #[serde(skip_serializing_if = "Option::is_none")]
     parent_name: Option<String>,
-    children: Vec<TaxonomyChildElementType>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    children: Option<Vec<TaxonomyChildElementType>>,
 }
 
 ///
@@ -42,9 +47,19 @@ impl From<TaxonomyGetResponse> for TaxonomyElementType {
         TaxonomyElementType {
             tsn: response.tsn,
             name: response.name,
+            kingdom_name: response.kingdom_name,
+            rank_name: response.rank_name,
             parent_tsn: response.parent_tsn,
             parent_name: response.parent_name,
-            children: response.children.iter().map(|child| { TaxonomyChildElementType::from(child) } ).collect(),
+            children: match response.children {
+                Some(children) => Some(
+                    children
+                        .iter()
+                        .map(|child| TaxonomyChildElementType::from(child))
+                        .collect(),
+                ),
+                None => None,
+            },
         }
     }
 }
@@ -53,7 +68,7 @@ impl From<&TaxonomyGetChild> for TaxonomyChildElementType {
     fn from(child_element: &TaxonomyGetChild) -> Self {
         TaxonomyChildElementType {
             tsn: child_element.tsn,
-            name: child_element.name.clone()
+            name: child_element.name.clone(),
         }
     }
 }
@@ -83,7 +98,7 @@ impl From<TaxonomyListResponse> for TaxonomyListResponseType {
                 number_of_elements: list_response.number_of_elements,
                 has_more_elements: list_response.has_more_elements,
             },
-            tsn: vec,
+            taxonomy: vec,
         }
     }
 }
@@ -93,9 +108,11 @@ impl From<TaxonomyListElement> for TaxonomyElementType {
         TaxonomyElementType {
             tsn: list_element.tsn,
             name: list_element.name.clone(),
+            kingdom_name: list_element.kingdom_name,
+            rank_name: list_element.rank_name,
             parent_tsn: None,
             parent_name: None,
-            children: vec![],
+            children: None,
         }
     }
 }

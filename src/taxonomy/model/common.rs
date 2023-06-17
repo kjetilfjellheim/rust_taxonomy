@@ -82,16 +82,22 @@ pub struct TaxonomyListElement {
     pub tsn: i32,
     /// Taxononomy name.
     pub name: String,
+    pub kingdom_name: String,
+    pub rank_name: String,
 }
 
 impl TaxonomyListElement {
     pub fn new(
         tsn: i32,
         name: String,
+        kingdomname: String,
+        rank_name: String,
     ) -> TaxonomyListElement {
         TaxonomyListElement {
             tsn: tsn,
             name: name,
+            kingdom_name: kingdomname,
+            rank_name: rank_name,
         }
     }
 }
@@ -104,28 +110,36 @@ pub struct TaxonomyGetResponse {
     pub tsn: i32,
     /// Taxononomy name.
     pub name: String,
+    // Kingdom name
+    pub kingdom_name: String,
+    // Rank name
+    pub rank_name: String,
     /// Parennt tsn
     pub parent_tsn: Option<i32>,
     /// Parent taxonomy name
     pub parent_name: Option<String>,
     /// Children taxonomy
-    pub children: Vec<TaxonomyGetChild>,
+    pub children: Option<Vec<TaxonomyGetChild>>,
 }
 
 impl TaxonomyGetResponse {
     pub fn new(
         tsn: i32,
         name: String,
+        kingdom_name: String,
+        rank_name: String,
         parent_tsn: Option<i32>,
         parent_name: Option<String>,
-        children: Vec<TaxonomyGetChild>
+        children: Option<Vec<TaxonomyGetChild>>,
     ) -> TaxonomyGetResponse {
         TaxonomyGetResponse {
             tsn: tsn,
             name: name,
+            kingdom_name: kingdom_name,
+            rank_name: rank_name,
             parent_tsn: parent_tsn,
             parent_name: parent_name,
-            children: children
+            children: children,
         }
     }
 }
@@ -144,7 +158,7 @@ impl TaxonomyGetChild {
     ) -> TaxonomyGetChild {
         TaxonomyGetChild {
             tsn: tsn,
-            name: name
+            name: name,
         }
     }
 }

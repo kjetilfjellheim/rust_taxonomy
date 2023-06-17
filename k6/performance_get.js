@@ -1,7 +1,7 @@
 import http from 'k6/http';
 
 export const options = {
-  vus: 8,
+  vus: 30,
   duration: '30s',
   thresholds: {
     http_req_failed: ['rate<0.01'], // http errors should be less than 1%
@@ -10,5 +10,5 @@ export const options = {
 };
 
 export default function () {
-  http.get('http://localhost:8080/taxonomy/50');
+  http.get('http://localhost:8080/taxonomy/164712');
 };
