@@ -6,16 +6,33 @@ pub struct TaxonomyListRequest {
     pub start_index: i64,
     /// Max number of elements to return.
     pub number_of_elements: i64,
+    /// What to sort for.
+    pub taxonomy_list_sort: TaxonomyListSort,
+    /// Ascending or descending.
+    pub taxonomy_list_order: TaxonomyListOrder,
+    pub filter_kingdomname: Option<String>,
+    pub filter_rankname: Option<String>,
+    pub filter_name: Option<String>
 }
 
 impl TaxonomyListRequest {
     pub fn new(
         start_index: i64,
         number_of_elements: i64,
+        taxonomy_list_sort: TaxonomyListSort,
+        taxonomy_list_order: TaxonomyListOrder,
+        filter_kingdomname: Option<String>,
+        filter_rankname: Option<String>,
+        filter_name: Option<String>
     ) -> TaxonomyListRequest {
         TaxonomyListRequest {
             start_index: start_index,
             number_of_elements: number_of_elements,
+            taxonomy_list_sort: taxonomy_list_sort,
+            taxonomy_list_order: taxonomy_list_order,
+            filter_kingdomname: filter_kingdomname,
+            filter_rankname: filter_rankname,
+            filter_name: filter_name
         }
     }
 }
@@ -161,4 +178,14 @@ impl TaxonomyGetChild {
             name: name,
         }
     }
+}
+
+pub enum TaxonomyListSort {
+    Tsn,
+    Name,
+}
+
+pub enum TaxonomyListOrder {
+    Asc,
+    Desc
 }

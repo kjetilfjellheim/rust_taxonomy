@@ -10,5 +10,5 @@ export const options = {
 };
 
 export default function () {
-  http.get('http://localhost:8080/taxonomy');
+  http.get('http://localhost:8080/taxonomy?startIndex=300000&pageSize=500');
 };

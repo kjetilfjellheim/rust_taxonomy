@@ -22,14 +22,18 @@ pub fn find_taxonomies(
 ) -> Result<TaxonomyListResponse, ApplicationError> {
     // Get connection
     let mut conn = connection()?;
-
     conn.build_transaction().read_only().run(
         |conn| -> Result<TaxonomyListResponse, ApplicationError> {
             let query_result: Result<Vec<TaxonomicUnit>, diesel::result::Error> =
                 find_taxonomies_dao(
                     conn,
                     list_request.start_index,
-                    list_request.number_of_elements + 1,
+                    list_request.number_of_elements,
+                    list_request.taxonomy_list_sort,
+                    list_request.taxonomy_list_order,
+                    list_request.filter_kingdomname,
+                    list_request.filter_rankname,
+                    list_request.filter_name
                 );
             // Test query result.
             match query_result {

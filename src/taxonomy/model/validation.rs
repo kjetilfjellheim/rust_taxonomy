@@ -9,6 +9,8 @@ const LONGNAME_TSN_INCORRECT: &str = "Tsn input must be 32 bit integer";
 const NUMBER_OF_ELEMENTS_MIN_CHECK: &str = "Number of elments must be greater than 0";
 /// Error text if number of elements is greater than 500.
 const NUMBER_OF_ELEMENTS_MAX_CHECK: &str = "Number of elements must be less than or euals to 500";
+/// Error text if start index to to large.
+const START_INDEX_TOO_HIGH: &str = "Start index to large, please lower start index or increase filtering";
 /// Max number of elements in a page.
 const MAX_ELEMENTS: i64 = 500;
 /// Min number of elements in a page.
@@ -22,9 +24,16 @@ const MIN_ELEMENTS: i64 = 0;
 /// @return input error empty success
 ///
 ///
+/// TODO: Make the 10000 configurable.
 pub fn validate_list_tsn_request(
     list_request: &TaxonomyListRequest
 ) -> Result<(), ApplicationError> {
+    if list_request.start_index > 10000 {
+        return Err(ApplicationError::new(
+            ErrorType::InputError,
+            START_INDEX_TOO_HIGH.to_string()
+        ));
+    }
     match MAX_ELEMENTS.cmp(&list_request.number_of_elements) {
         std::cmp::Ordering::Less => {
             return Err(ApplicationError::new(
