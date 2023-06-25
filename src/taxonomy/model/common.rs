@@ -161,6 +161,34 @@ impl TaxonomyGetResponse {
     }
 }
 
+///
+///  Internal taxonomy get response.
+///
+pub struct TaxonomyHierarchyResponse {
+    pub hierarchy: Vec<TaxonomyHierarchyElement>
+}
+
+pub struct TaxonomyHierarchyElement {
+    pub tsn: i32,
+    pub name: String,
+    pub kingdom_name: String,
+    pub rank_name: String
+}
+
+impl TaxonomyHierarchyElement {
+    pub fn new(tsn: i32,
+        name: String,
+        kingdom_name: String,
+        rank_name: String) -> TaxonomyHierarchyElement {
+        TaxonomyHierarchyElement {
+            tsn: tsn,
+            name: name,
+            kingdom_name: kingdom_name,
+            rank_name: rank_name
+        }
+    }
+}
+
 pub struct TaxonomyGetChild {
     /// Child taxonomy tsn
     pub tsn: i32,

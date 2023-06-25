@@ -13,6 +13,7 @@ pub struct TaxonomicUnit {
     pub parent_tsn: i32,
     pub kingdom_name: String,
     pub rank_name: String,
+    pub hierarchy_string: String
 }
 
 diesel::table! {
@@ -21,6 +22,7 @@ diesel::table! {
         complete_name -> Varchar,
         parent_tsn -> Int4,
         kingdom_name -> Char,
-        rank_name -> Char
+        rank_name -> Char,
+        hierarchy_string -> Char
     }
 }

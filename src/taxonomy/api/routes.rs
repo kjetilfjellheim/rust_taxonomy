@@ -1,9 +1,9 @@
 use crate::taxonomy::api::request::{TaxonomyListRequestQuery, TaxonomyListRequestBody};
-use crate::taxonomy::api::response::{TaxonomyElementType, TaxonomyListResponseType};
+use crate::taxonomy::api::response::{TaxonomyElementType, TaxonomyListResponseType, TaxonomyHierarchyType};
 use crate::taxonomy::model::{validate_list_tsn_request, validate_specific_tsn_request};
 use crate::taxonomy::model::{ApplicationError, TaxonomyGetRequest, TaxonomyListSort, TaxonomyListOrder, TaxonomyListRequest};
 use crate::taxonomy::service::{
-    find_taxonomies as find_taxonomies_service, find_taxonomy as find_taxonomy_service,
+    find_taxonomies as find_taxonomies_service, find_taxonomy as find_taxonomy_service, find_taxonomy_hierarchy as find_taxonomy_hierarchy_service,
 };
 use actix_web::{post, get, web, web::Path, web::Query, HttpResponse, web::Json};
 
@@ -65,6 +65,26 @@ pub async fn find_taxonomy(tsn: Path<String>) -> Result<HttpResponse, Applicatio
     // Handle taxonomy element result.
     match taxonomy_element {
         Ok(data) => Ok(HttpResponse::Ok().json(TaxonomyElementType::from(data))),
+        Err(application_error) => Err(application_error),
+    }
+}
+
+///
+/// Get taxonomy hierarchy.
+///
+#[get("/taxonomy/{tsn}/hierarchy")]
+pub async fn find_taxonomy_hierarchy(tsn: Path<String>) -> Result<HttpResponse, ApplicationError> {
+    //Validate taxonomy value.
+    let tsn = validate_specific_tsn_request(&tsn.into_inner())?;
+    // Create taxonomy request.
+    let taxonomy_request = TaxonomyGetRequest::new(tsn);
+    // Get taxonomy hierarchy.
+    let taxonomy_hierarchy = web::block(|| find_taxonomy_hierarchy_service(taxonomy_request))
+    .await
+    .unwrap();
+    // Handle taxonomy hierarchy result.
+    match taxonomy_hierarchy {
+        Ok(data) => Ok(HttpResponse::Ok().json(TaxonomyHierarchyType::from(data))),
         Err(application_error) => Err(application_error),
     }
 }

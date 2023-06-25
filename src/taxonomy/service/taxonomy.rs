@@ -7,9 +7,10 @@ use crate::taxonomy::dao::{
 use crate::taxonomy::model::ErrorType;
 use crate::taxonomy::model::{
     ApplicationError, TaxonomyGetChild, TaxonomyGetRequest, TaxonomyGetResponse,
-    TaxonomyListElement, TaxonomyListRequest, TaxonomyListResponse,
+    TaxonomyListElement, TaxonomyListRequest, TaxonomyListResponse, TaxonomyHierarchyElement, TaxonomyHierarchyResponse,
 };
 use log::warn;
+use std::str::FromStr;
 
 /// Error text if unknown error occurs during query.
 const QUERY_ERROR_STRING: &str = "Error querying taxonomic data";
@@ -132,6 +133,61 @@ pub fn find_taxonomy(
             }) // end match
         }, // end transaction
     )
+}
+
+///
+/// Get hierarchy
+///
+pub fn find_taxonomy_hierarchy(
+    taxonomy_request: TaxonomyGetRequest
+) -> Result<TaxonomyHierarchyResponse, ApplicationError> {
+    // Get connection
+    let mut conn = connection()?;
+
+    conn.build_transaction().read_only().run(
+        |conn| -> Result<TaxonomyHierarchyResponse, ApplicationError> {
+            let taxonomy_unit: Result<TaxonomicUnit, diesel::result::Error> =
+                find_taxonomy_dao(conn, taxonomy_request.tsn);
+
+            match taxonomy_unit {
+                Ok(taxonomy_unit) => Ok(taxonomy_unit),
+                Err(diesel::result::Error::NotFound) => Err(ApplicationError::new(
+                    ErrorType::NotFoundError,
+                    TAXONOMY_NOT_FOUND.to_string(),
+                )),
+                Err(_) => Err(ApplicationError::new(
+                    ErrorType::DbProgramError,
+                    QUERY_ERROR_STRING.to_string(),
+                )),
+            }
+            .and_then(|taxonomy_unit: TaxonomicUnit| {
+                let mut hierarchy: Vec<TaxonomyHierarchyElement> = vec!();
+                let tsn_coll = taxonomy_unit.hierarchy_string.split('-').map(|f| { <i32 as FromStr>::from_str(f).unwrap() }).collect::<Vec<i32>>();
+                for tsn in tsn_coll {
+                    print!("{}", tsn);
+                    let taxonomy_unit: Result<TaxonomicUnit, diesel::result::Error> = find_taxonomy_dao(conn, tsn);
+                    let taxonomy_element = match_taxonomy_unit(taxonomy_unit)?;
+                    hierarchy.push(taxonomy_element)
+                }
+                Ok(TaxonomyHierarchyResponse {
+                    hierarchy: hierarchy
+                })
+            }
+        )}
+    )
+}
+
+fn match_taxonomy_unit(taxonomy_unit: Result<TaxonomicUnit, diesel::result::Error>) -> Result<TaxonomyHierarchyElement, ApplicationError> {
+    match taxonomy_unit {
+        Err(_err) => { return Err(ApplicationError::new(ErrorType::DbProgramError, QUERY_ERROR_STRING.to_string()))},
+        Ok(taxonomy) => {
+            Ok(TaxonomyHierarchyElement::new(
+                taxonomy.tsn,
+                taxonomy.complete_name,
+                taxonomy.kingdom_name,
+                taxonomy.rank_name))
+        }
+    }
 }
 
 ///

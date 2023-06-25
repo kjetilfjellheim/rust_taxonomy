@@ -1,7 +1,7 @@
 use serde::Serialize;
 
 use crate::taxonomy::model::{
-    TaxonomyGetChild, TaxonomyGetResponse, TaxonomyListElement, TaxonomyListResponse,
+    TaxonomyGetChild, TaxonomyGetResponse, TaxonomyListElement, TaxonomyListResponse, TaxonomyHierarchyResponse
 };
 
 ///
@@ -113,6 +113,43 @@ impl From<TaxonomyListElement> for TaxonomyElementType {
             parent_tsn: None,
             parent_name: None,
             children: None,
+        }
+    }
+}
+
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct TaxonomyHierarchyType {
+    hierarchy: Vec<TaxonomyHierarchyElementType>
+}
+
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct TaxonomyHierarchyElementType {
+    tsn: i32,
+    name: String,
+    kingdom_name: String,
+    rank_name: String
+}
+
+impl From<TaxonomyHierarchyResponse> for TaxonomyHierarchyType {
+    fn from(element: TaxonomyHierarchyResponse) -> Self {
+        TaxonomyHierarchyType {
+            hierarchy: element.hierarchy.iter().map(|f| { TaxonomyHierarchyElementType::new(f.tsn, f.name.clone(), f.kingdom_name.clone(), f.rank_name.clone()) }).collect()
+        }
+    }
+}
+
+impl TaxonomyHierarchyElementType {
+    fn new( tsn: i32,
+            name: String,
+            kingdom_name: String,
+            rank_name: String) -> Self {
+        TaxonomyHierarchyElementType {
+                tsn: tsn,
+                name: name,
+                kingdom_name: kingdom_name,
+                rank_name: rank_name
         }
     }
 }
