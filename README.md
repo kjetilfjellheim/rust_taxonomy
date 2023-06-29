@@ -50,3 +50,6 @@ The configuration file uses log4rs and an examnple is stored in resources/loggin
 
 ## Ide 
 I have used VSCode for development. Configuration files have not been included since you may choose any other development environment.
+
+## Information
+This api was written in an attempt to learn Rust. I learnt a lot during development so the code is far from perfect.
