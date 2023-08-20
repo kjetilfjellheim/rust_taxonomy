@@ -9,6 +9,16 @@ export const options = {
   },
 };
 
+export const payload = JSON.stringify({
+ 
+});
+
+const params = {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+};
+
 export default function () {
-  http.get('http://localhost:8080/taxonomy?startIndex=300000&pageSize=500');
+  http.post('http://localhost:8080/taxonomy?startIndex=0&pageSize=500', payload, params);
 };
